@@ -1,0 +1,1257 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://generated.outboundorder.order.clx.interfaces.valspar.com"
+           targetNamespace="http://generated.outboundorder.order.clx.interfaces.valspar.com"
+           elementFormDefault="qualified">
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+	<xs:element name="TransactionInformation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DocId"/>
+				<xs:element ref="Sender"/>
+				<xs:element ref="Receiver"/>
+				<xs:element ref="TransactionHistory"/>
+			</xs:sequence>
+			<xs:attribute name="Version" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="2.0.0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TransactionHistory">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Transaction" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Transaction">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time"/>
+				<xs:element ref="Sender"/>
+				<xs:element ref="Receiver"/>
+				<xs:element ref="EMail" minOccurs="0"/>
+				<xs:element ref="Comment" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DocId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Id">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Type">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Description">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OrderNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<!--<xs:element name="PoNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>-->
+	<xs:element name="Amount">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UnitOfMeasure">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="EMail">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Comment">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Organization">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Sender">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Organization"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Receiver">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Organization"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrganizationName">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OrganizationId">
+		<xs:complexType mixed="true">
+			<xs:attribute name="type">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="SCAC"/>
+						<xs:enumeration value="DUNS"/>
+						<xs:enumeration value="CIFN"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ChildOrganizationId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="LocationCode">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Notes">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Address1"/>
+				<xs:element ref="Address2" minOccurs="0"/>
+				<xs:element ref="Address3" minOccurs="0"/>
+				<xs:element ref="Address4" minOccurs="0"/>
+				<xs:element ref="City"/>
+				<xs:element ref="StateProvince" minOccurs="0"/>
+				<xs:element ref="PostalCode" minOccurs="0"/>
+				<xs:element ref="Country"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Address1">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address2">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address3">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address4">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="City">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="StateProvince">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Country">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="PostalCode">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Day">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Month">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Year">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Hour">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Minute">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Second">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Millisecond">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="TimeZone">
+		<xs:complexType mixed="true">
+			<xs:attribute name="utcOffset" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Day"/>
+				<xs:element ref="Month"/>
+				<xs:element ref="Year"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Time">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Hour"/>
+				<xs:element ref="Minute"/>
+				<xs:element ref="Second"/>
+				<xs:element ref="Millisecond" minOccurs="0"/>
+				<xs:element ref="TimeZone"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderTransaction">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TransactionInformation"/>
+				<xs:element ref="Order" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Order">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TransactionId" minOccurs="0"/>
+				<xs:element ref="TransactionType" minOccurs="0"/>
+				<xs:element ref="ActionCode"/>
+				<xs:element ref="OriginalShipmentId" minOccurs="0"/>
+				<xs:element ref="ShipmentId"/>
+				<xs:element ref="TenderIndicator" minOccurs="0"/>
+				<xs:element ref="LineHaulMode" minOccurs="0"/>
+				<xs:element ref="MovementType" minOccurs="0"/>
+				<xs:element ref="PaymentMethod"/>
+				<xs:element ref="Carrier" minOccurs="0"/>
+				<xs:element ref="TourId" minOccurs="0"/>
+				<xs:element ref="OtherReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="UserDefinedRouteAttribute" minOccurs="0"/>
+				<xs:element ref="UserDefinedContractAttribute" minOccurs="0"/>
+				<xs:element ref="UserDefinedAccessorialAttribute" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:choice minOccurs="0">
+					<xs:element ref="CarrierResponseTime"/>
+					<xs:element ref="CarrierResponseBy"/>
+				</xs:choice>
+				<xs:element ref="InternalShipmentPriority" minOccurs="0"/>
+				<xs:element ref="ServiceType"/>
+				<xs:element ref="SpecialHandling" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="FreightClass" minOccurs="0"/>
+				<xs:element ref="Note" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Shipper"/>
+				<xs:element ref="Equipment" minOccurs="0"/>
+				<xs:element ref="UserDefinedEquipmentList" minOccurs="0"/>
+				<xs:element ref="LadingQuantity" minOccurs="0"/>
+				<xs:element ref="GrossWeight" minOccurs="0"/>
+				<xs:element ref="Volume" minOccurs="0"/>
+				<xs:element ref="StackedPalletInfo" minOccurs="0"/>
+				<xs:element ref="Contact" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Driver" minOccurs="0"/>
+				<xs:element ref="Tractor" minOccurs="0"/>
+				<xs:element ref="SubShipment"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SubShipment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="BOL"/>
+				<xs:element ref="PONumber" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="SalesOrderNumber" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="OtherReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="UserDefinedContractAttribute" minOccurs="0"/>
+				<xs:element ref="UserDefinedAccessorialAttribute" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="UserDefinedReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="MovementType" minOccurs="0"/>
+				<xs:element ref="LadingQuantity"/>
+				<xs:element ref="GrossWeight"/>
+				<xs:element ref="Volume"/>
+				<xs:element ref="LoadPlanned" minOccurs="0"/>
+				<xs:element ref="Origin"/>
+				<xs:element ref="Destination"/>
+				<xs:element ref="PoolPointOverride" minOccurs="0"/>
+				<xs:choice>
+					<xs:element ref="RouteTemplateNumber" minOccurs="0"/>
+					<xs:element ref="RouteTemplateItem" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:choice>
+				<xs:element ref="OrderRoute" minOccurs="0"/>
+				<xs:element ref="OrderHoldIndicator" minOccurs="0"/>
+				<xs:element ref="ShipmentCustomer" minOccurs="0"/>
+				<xs:element ref="ShipmentVendor" minOccurs="0"/>
+				<xs:element ref="Note" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="ShippingUnit" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TransactionId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="TransactionType">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ActionCode">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="EXPIRE"/>
+						<xs:enumeration value="ORDER_RESUBMIT"/>
+						<xs:enumeration value="REISSUE"/>
+						<xs:enumeration value="ADD"/>
+						<xs:enumeration value="DELETE"/>
+						<xs:enumeration value="WITHDRAW"/>
+						<xs:enumeration value="REPLACE"/>
+						<xs:enumeration value="LINE_REPLACE"/>
+						<xs:enumeration value="REPLACE_ROUTED_ORDER"/>
+						<xs:enumeration value="REPLACE_MANIFEST"/>
+						<xs:enumeration value="LINE_DELETE"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OriginalShipmentId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="TenderIndicator">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="LOAD_TENDER"/>
+						<xs:enumeration value="TENDERED_BY_SHIPPER"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MovementType">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="TRANSFER"/>
+						<xs:enumeration value="OUTBOUND"/>
+						<xs:enumeration value="INBOUND"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PaymentMethod">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="BillTo" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="THIRD_PARTY"/>
+						<xs:enumeration value="PREPAID_CHRG_CUST"/>
+						<xs:enumeration value="COLLECT"/>
+						<xs:enumeration value="COLLECT_CREDIT_CUST"/>
+						<xs:enumeration value="RULE11_SHIPMENT"/>
+						<xs:enumeration value="PREPAID"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BillTo">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="BillToDuns"/>
+					<xs:element ref="BillToName" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="BillToName"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BillToDuns">
+		<xs:complexType mixed="true">
+			<xs:attribute name="type">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="SCAC"/>
+						<xs:enumeration value="DUNS"/>
+						<xs:enumeration value="CIFN"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BillToName">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="LineHaulMode">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="INTERMODAL"/>
+						<xs:enumeration value="ANY"/>
+						<xs:enumeration value="LTL"/>
+						<xs:enumeration value="UNASSIGN"/>
+						<xs:enumeration value="TRUCK"/>
+						<xs:enumeration value="OCEAN_BULK"/>
+						<xs:enumeration value="AIR"/>
+						<xs:enumeration value="BARGE"/>
+						<xs:enumeration value="OCEAN"/>
+						<xs:enumeration value="PARCEL"/>
+						<xs:enumeration value="CUSTOMER"/>
+						<xs:enumeration value="TRUCK_BULK"/>
+						<xs:enumeration value="RAIL"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Carrier">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+				<xs:element ref="CarrierSCAC" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CarrierSCAC">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TourId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OtherReference">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Id"/>
+				<xs:element ref="Type"/>
+				<xs:element ref="Description" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UserDefinedRouteAttribute">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UserDefinedContractAttribute">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UserDefinedAccessorialAttribute">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UserDefinedReference">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Id"/>
+				<xs:element ref="Type"/>
+				<xs:element ref="OrganizationId" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CarrierResponseTime">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Hour" minOccurs="0"/>
+				<xs:element ref="Minute" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CarrierResponseBy">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="InternalShipmentPriority">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ServiceType">
+		<xs:complexType>
+			<xs:attribute name="value" default="NORMAL">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="UPS_WWIDE_EXD_SM"/>
+						<xs:enumeration value="EXPEDITE"/>
+						<xs:enumeration value="FEDEX_FIRST_OVERN"/>
+						<xs:enumeration value="TEAM"/>
+						<xs:enumeration value="UPS_NEXT_AIR_SAV"/>
+						<xs:enumeration value="FEDEX_EXPRESS_SAV"/>
+						<xs:enumeration value="UPS_3DAY_SELECT"/>
+						<xs:enumeration value="FEDEX_EUROPE_FIP"/>
+						<xs:enumeration value="UPS_STANDARD"/>
+						<xs:enumeration value="ANY"/>
+						<xs:enumeration value="UPS_WWIDE_EXP_SSM"/>
+						<xs:enumeration value="FEDEX_INTNL_FIRST"/>
+						<xs:enumeration value="FEDEX_GROUND"/>
+						<xs:enumeration value="DHL_DOMESTIC_EXP_12P"/>
+						<xs:enumeration value="FEDEX_INTNL_ECO"/>
+						<xs:enumeration value="DHL_INTNL_GROUND"/>
+						<xs:enumeration value="FEDEX_GROUND_HOME"/>
+						<xs:enumeration value="FEDEX_STANDARD_OVERN"/>
+						<xs:enumeration value="FEDEX_INTNL_ECO_FRT"/>
+						<xs:enumeration value="UPS_2ND_AIR_AM"/>
+						<xs:enumeration value="SINGLE"/>
+						<xs:enumeration value="DHL_EXP_WWIDE_0900"/>
+						<xs:enumeration value="DHL_DOMESTIC_EXP_9A"/>
+						<xs:enumeration value="UPS_NEXT_AIR_EAM"/>
+						<xs:enumeration value="NORMAL"/>
+						<xs:enumeration value="FEDEX_1DAY_FREIGHT"/>
+						<xs:enumeration value="DHL_EXPRESS_WWIDE"/>
+						<xs:enumeration value="UPS_WWIDE_EXP_PSM"/>
+						<xs:enumeration value="FEDEX_2DAY_FREIGHT"/>
+						<xs:enumeration value="FEDEX_3DAY_FREIGHT"/>
+						<xs:enumeration value="DHL_DOMESTIC_GROUND"/>
+						<xs:enumeration value="UPS_GROUND"/>
+						<xs:enumeration value="DHL_EXP_WWIDE_1200"/>
+						<xs:enumeration value="UPS_2ND_AIR"/>
+						<xs:enumeration value="FEDEX_PRIORITY_OVERN"/>
+						<xs:enumeration value="UPS_NEXT_AIR"/>
+						<xs:enumeration value="DHL_EXP_WWIDE_1030"/>
+						<xs:enumeration value="UPS_WWIDE_EXP_SM"/>
+						<xs:enumeration value="FEDEX_INTNL_PRI"/>
+						<xs:enumeration value="FEDEX_2DAY"/>
+						<xs:enumeration value="DHL_DOMESTIC_EXPRESS"/>
+						<xs:enumeration value="FEDEX_INTNL_PRI_FRT"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SpecialHandling">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="FreightClass">
+		<xs:complexType>
+			<xs:attribute name="value" default="FAK">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="92.5"/>
+						<xs:enumeration value="400"/>
+						<xs:enumeration value="100"/>
+						<xs:enumeration value="0"/>
+						<xs:enumeration value="77.5"/>
+						<xs:enumeration value="110"/>
+						<xs:enumeration value="125"/>
+						<xs:enumeration value="500"/>
+						<xs:enumeration value="200"/>
+						<xs:enumeration value="FAK"/>
+						<xs:enumeration value="150"/>
+						<xs:enumeration value="50"/>
+						<xs:enumeration value="55"/>
+						<xs:enumeration value="60"/>
+						<xs:enumeration value="65"/>
+						<xs:enumeration value="70"/>
+						<xs:enumeration value="175"/>
+						<xs:enumeration value="300"/>
+						<xs:enumeration value="85"/>
+						<xs:enumeration value="250"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Note">
+		<xs:complexType mixed="true">
+			<xs:attribute name="type">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="PRIVATE"/>
+						<xs:enumeration value="PUBLIC"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Shipper">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Contact">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ContactName" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Title" minOccurs="0"/>
+				<xs:element ref="Phone" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ContactName">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Title">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Phone">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Equipment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="EquipmentInitials" minOccurs="0"/>
+				<xs:element ref="TrailerNumber" minOccurs="0"/>
+				<xs:element ref="EquipmentDescription"/>
+				<xs:element ref="EquipmentSize" minOccurs="0"/>
+				<xs:element ref="EquipmentAttribute" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EquipmentInitials">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="TrailerNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="EquipmentDescription">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="EquipmentSize">
+		<xs:complexType>
+			<xs:attribute name="value" use="required" type="xs:anySimpleType"/>
+			<xs:attribute name="unitOfMeasure" use="required" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EquipmentAttribute">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UserDefinedEquipmentList">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="StackedPalletInfo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="LadingQuantity" minOccurs="0"/>
+				<xs:element ref="GrossWeight" minOccurs="0"/>
+				<xs:element ref="Volume" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LadingQuantity">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="PIECES">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="BULK"/>
+						<xs:enumeration value="COIL"/>
+						<xs:enumeration value="BARREL"/>
+						<xs:enumeration value="TUBE"/>
+						<xs:enumeration value="BAG"/>
+						<xs:enumeration value="DRUM"/>
+						<xs:enumeration value="SKID"/>
+						<xs:enumeration value="CASE"/>
+						<xs:enumeration value="PALLET"/>
+						<xs:enumeration value="PIECES"/>
+						<xs:enumeration value="PACKAGE"/>
+						<xs:enumeration value="ROLL"/>
+						<xs:enumeration value="CARTON"/>
+						<xs:enumeration value="TOTE"/>
+						<xs:enumeration value="UNIT"/>
+						<xs:enumeration value="BULK_BAG"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="GrossWeight">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="TONS"/>
+						<xs:enumeration value="KILOGRAMS"/>
+						<xs:enumeration value="CWT"/>
+						<xs:enumeration value="MTONS"/>
+						<xs:enumeration value="POUNDS"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Volume">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="CUBIC_METERS"/>
+						<xs:enumeration value="CUBIC_FEET"/>
+						<xs:enumeration value="GALLONS"/>
+						<xs:enumeration value="MSF"/>
+						<xs:enumeration value="LITERS"/>
+						<xs:enumeration value="BUSHEL"/>
+						<xs:enumeration value="HUNDRED_BOARD_FEET"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LoadPlanned">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="StopReasonCode">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="PARTIAL_LOAD"/>
+						<xs:enumeration value="COMPLETE_UNLOAD"/>
+						<xs:enumeration value="COMPLETE_LOAD"/>
+						<xs:enumeration value="PARTIAL_UNLOAD"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BOL">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="PONumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="SalesOrderNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Origin">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="StopNumber"/>
+				<xs:element ref="StopReasonCode"/>
+				<xs:element ref="RouteDistance" minOccurs="0"/>
+				<xs:element ref="Location"/>
+				<xs:element ref="Address" minOccurs="0"/>
+				<xs:element ref="Note" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Planned" minOccurs="0"/>
+				<xs:element ref="Appointment" minOccurs="0"/>
+				<xs:element ref="Required" minOccurs="0"/>
+				<xs:element ref="OtherReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Contact" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="loaded" default="NO">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="YES"/>
+						<xs:enumeration value="NO"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Destination">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="StopNumber"/>
+				<xs:element ref="StopReasonCode"/>
+				<xs:element ref="RouteDistance" minOccurs="0"/>
+				<xs:element ref="Location"/>
+				<xs:element ref="Address" minOccurs="0"/>
+				<xs:element ref="Note" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Planned" minOccurs="0"/>
+				<xs:element ref="Appointment" minOccurs="0"/>
+				<xs:element ref="Required" minOccurs="0"/>
+				<xs:element ref="OtherReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Contact" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="StopNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="RouteDistance">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="MILE">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="KILOMETER"/>
+						<xs:enumeration value="MILE"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Location">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Name" minOccurs="0"/>
+				<xs:element ref="Id"/>
+				<xs:element ref="Type"/>
+				<xs:element ref="Description" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Planned">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Appointment">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Required">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="From">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="To">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PoolPointOverride">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TransferPoint" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="DIRECT"/>
+						<xs:enumeration value="POOL"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TransferPoint">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Location"/>
+				<xs:element ref="Address" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RouteTemplateNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="RouteTemplateItem">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TemplateNumber"/>
+				<xs:element ref="SequenceNumber" minOccurs="0"/>
+				<xs:element ref="UsageDate" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="type" default="SEGMENT">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="SEGMENT"/>
+						<xs:enumeration value="CONNECTOR"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TemplateNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="SequenceNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UsageDate">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderRoute">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrderRouteDetail" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderRouteDetail">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Place"/>
+				<xs:element ref="ProcessingTime"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProcessingTime">
+		<xs:complexType mixed="true">
+			<xs:attribute name="period" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="DAY"/>
+						<xs:enumeration value="HOUR"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Place">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Name" minOccurs="0"/>
+				<xs:element ref="LocationReference"/>
+				<xs:element ref="StreetAddress" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="City" minOccurs="0"/>
+				<xs:element ref="StateProvince" minOccurs="0"/>
+				<xs:element ref="PostalCode" minOccurs="0"/>
+				<xs:element ref="Country" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="StreetAddress">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="LocationReference">
+		<xs:complexType mixed="true">
+			<xs:attribute name="type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="SHIPPER"/>
+						<xs:enumeration value="CITY"/>
+						<xs:enumeration value="SPLC"/>
+						<xs:enumeration value="CENSUS_D"/>
+						<xs:enumeration value="RAIL_RULE260"/>
+						<xs:enumeration value="CENSUS_K"/>
+						<xs:enumeration value="UNLOCODE"/>
+						<xs:enumeration value="FSAC"/>
+						<xs:enumeration value="IATA"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrderHoldIndicator">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="HoldId"/>
+				<xs:element ref="Location" minOccurs="0"/>
+				<xs:element ref="HoldType" minOccurs="0"/>
+				<xs:element ref="Note" minOccurs="0"/>
+				<xs:element ref="PlannedReleaseDate" minOccurs="0"/>
+				<xs:element ref="ActualReleaseDate" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="RELEASE"/>
+						<xs:enumeration value="HOLD"/>
+						<xs:enumeration value="UPDATE"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="HoldId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="HoldType">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="PlannedReleaseDate">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ActualReleaseDate">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentCustomer">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentVendor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShippingUnit">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="LadingQuantity" minOccurs="0"/>
+				<xs:element ref="GrossWeight" minOccurs="0"/>
+				<xs:element ref="Volume" minOccurs="0"/>
+				<xs:element ref="FreightClass" minOccurs="0"/>
+				<xs:element ref="UserDefinedReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Length" minOccurs="0"/>
+				<xs:element ref="Height" minOccurs="0"/>
+				<xs:element ref="Width" minOccurs="0"/>
+				<xs:element ref="ProductLineItem" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductLineItem">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="ProductId" minOccurs="0"/>
+				<xs:element ref="ProductDescription" minOccurs="0"/>
+				<xs:element ref="LadingQuantity" minOccurs="0"/>
+				<xs:element ref="GrossWeight" minOccurs="0"/>
+				<xs:element ref="NetWeight" minOccurs="0"/>
+				<xs:element ref="Volume" minOccurs="0"/>
+				<xs:element ref="CommodityCode" minOccurs="0"/>
+				<xs:element ref="FreightClass" minOccurs="0"/>
+				<xs:element ref="OrderQuantity" minOccurs="0"/>
+				<xs:element ref="ShippedQuantity" minOccurs="0"/>
+				<xs:element ref="UnitPrice" minOccurs="0"/>
+				<xs:element ref="UserDefinedReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Length" minOccurs="0"/>
+				<xs:element ref="Height" minOccurs="0"/>
+				<xs:element ref="Width" minOccurs="0"/>
+				<xs:element ref="Wheelbase" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProductId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ProductDescription">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="NetWeight">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="TONS"/>
+						<xs:enumeration value="KILOGRAMS"/>
+						<xs:enumeration value="CWT"/>
+						<xs:enumeration value="MTONS"/>
+						<xs:enumeration value="POUNDS"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CommodityCode">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OrderQuantity">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="EACH">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="CASE"/>
+						<xs:enumeration value="DOZEN"/>
+						<xs:enumeration value="KILOGRAMS"/>
+						<xs:enumeration value="EACH"/>
+						<xs:enumeration value="POUNDS"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShippedQuantity">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="EACH">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="CASE"/>
+						<xs:enumeration value="DOZEN"/>
+						<xs:enumeration value="KILOGRAMS"/>
+						<xs:enumeration value="EACH"/>
+						<xs:enumeration value="POUNDS"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UnitPrice">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfCurrency" default="USD">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="RSD"/>
+						<xs:enumeration value="GBP"/>
+						<xs:enumeration value="ISK"/>
+						<xs:enumeration value="VEF"/>
+						<xs:enumeration value="RUB"/>
+						<xs:enumeration value="ZAR"/>
+						<xs:enumeration value="SEK"/>
+						<xs:enumeration value="CHF"/>
+						<xs:enumeration value="PEN"/>
+						<xs:enumeration value="JPY"/>
+						<xs:enumeration value="SGD"/>
+						<xs:enumeration value="HNL"/>
+						<xs:enumeration value="NOK"/>
+						<xs:enumeration value="ARS"/>
+						<xs:enumeration value="GTQ"/>
+						<xs:enumeration value="CLP"/>
+						<xs:enumeration value="CAD"/>
+						<xs:enumeration value="AUD"/>
+						<xs:enumeration value="TRY"/>
+						<xs:enumeration value="HRK"/>
+						<xs:enumeration value="INR"/>
+						<xs:enumeration value="RON"/>
+						<xs:enumeration value="CZK"/>
+						<xs:enumeration value="THB"/>
+						<xs:enumeration value="KRW"/>
+						<xs:enumeration value="TTD"/>
+						<xs:enumeration value="BRL"/>
+						<xs:enumeration value="CNY"/>
+						<xs:enumeration value="DKK"/>
+						<xs:enumeration value="PLN"/>
+						<xs:enumeration value="COP"/>
+						<xs:enumeration value="MXN"/>
+						<xs:enumeration value="PAB"/>
+						<xs:enumeration value="HUF"/>
+						<xs:enumeration value="USD"/>
+						<xs:enumeration value="TWD"/>
+						<xs:enumeration value="EUR"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Length">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="INCH">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="CENTIMETER"/>
+						<xs:enumeration value="FOOT"/>
+						<xs:enumeration value="METER"/>
+						<xs:enumeration value="INCH"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Height">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="INCH">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="CENTIMETER"/>
+						<xs:enumeration value="FOOT"/>
+						<xs:enumeration value="METER"/>
+						<xs:enumeration value="INCH"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Width">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="INCH">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="CENTIMETER"/>
+						<xs:enumeration value="FOOT"/>
+						<xs:enumeration value="METER"/>
+						<xs:enumeration value="INCH"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Wheelbase">
+		<xs:complexType mixed="true">
+			<xs:attribute name="unitOfMeasure" default="INCH">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="CENTIMETER"/>
+						<xs:enumeration value="FOOT"/>
+						<xs:enumeration value="METER"/>
+						<xs:enumeration value="INCH"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Driver">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DriverName"/>
+				<xs:element ref="DriverNumber" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DriverName">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="DriverNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Tractor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TractorNumber"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TractorNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,301 @@
+cd /data/pos/badcock/pub
+lcd /data/guardsman_pos/transfers/badcock/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/badcock/pub/archive
+-rm valspar*.txt
+cd /data/pos/finfurn/pub
+lcd /data/guardsman_pos/transfers/finfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/finfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/ethallen/pub
+lcd /data/guardsman_pos/transfers/ethallen/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/ethallen/pub/archive
+-rm valspar*.txt
+cd /data/pos/furncons/pub
+lcd /data/guardsman_pos/transfers/furncons/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/furncons/pub/archive
+-rm valspar*.txt
+cd /data/pos/nationwi/pub
+lcd /data/guardsman_pos/transfers/nationwi/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/nationwi/pub/archive
+-rm valspar*.txt
+cd /data/pos/havertys/pub
+lcd /data/guardsman_pos/transfers/havertys/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/havertys/pub/archive
+-rm valspar*.txt
+cd /data/pos/nfmart/pub
+lcd /data/guardsman_pos/transfers/nfmart/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/nfmart/pub/archive
+-rm valspar*.txt
+cd /data/pos/morfurn/pub
+lcd /data/guardsman_pos/transfers/morfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/morfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/starfurn/pub
+lcd /data/guardsman_pos/transfers/starfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/starfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/ashncal/pub
+lcd /data/guardsman_pos/transfers/ashncal/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/ashncal/pub/archive
+-rm valspar*.txt
+cd /data/pos/bobfurn/pub
+lcd /data/guardsman_pos/transfers/bobfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/bobfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/cdtville/pub
+lcd /data/guardsman_pos/transfers/cdtville/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/cdtville/pub/archive
+-rm valspar*.txt
+cd /data/pos/jerofurn/pub
+lcd /data/guardsman_pos/transfers/jerofurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/jerofurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/southfur/pub
+lcd /data/guardsman_pos/transfers/southfur/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/southfur/pub/archive
+-rm valspar*.txt
+cd /data/pos/ghfurn/pub
+lcd /data/guardsman_pos/transfers/ghfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/ghfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/belfurn/pub
+lcd /data/guardsman_pos/transfers/belfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/belfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/rosafurn/pub
+lcd /data/guardsman_pos/transfers/rosafurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/rosafurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/lindfurn/pub
+lcd /data/guardsman_pos/transfers/lindfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lindfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/jenfurn/pub
+lcd /data/guardsman_pos/transfers/jenfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/jenfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/ashking/pub
+lcd /data/guardsman_pos/transfers/ashking/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/ashking/pub/archive
+-rm valspar*.txt
+cd /data/pos/lzboypk/pub
+lcd /data/guardsman_pos/transfers/lzboypk/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lzboypk/pub/archive
+-rm valspar*.txt
+cd /data/pos/furn4les/pub
+lcd /data/guardsman_pos/transfers/furn4les/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/furn4les/pub/archive
+-rm valspar*.txt
+cd /data/pos/belfort/pub
+lcd /data/guardsman_pos/transfers/belfort/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/belfort/pub/archive
+-rm valspar*.txt
+cd /data/pos/weekonly/pub
+lcd /data/guardsman_pos/transfers/weekonly/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/weekonly/pub/archive
+-rm valspar*.txt
+cd /data/pos/dearden/pub
+lcd /data/guardsman_pos/transfers/dearden/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/dearden/pub/archive
+-rm valspar*.txt
+cd /data/pos/bernapp/pub
+lcd /data/guardsman_pos/transfers/bernapp/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/bernapp/pub/archive
+-rm valspar*.txt
+cd /data/pos/gladfurn/pub
+lcd /data/guardsman_pos/transfers/gladfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/gladfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/cantoni/pub
+lcd /data/guardsman_pos/transfers/cantoni/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/cantoni/pub/archive
+-rm valspar*.txt
+cd /data/pos/lzboytn/pub
+lcd /data/guardsman_pos/transfers/lzboytn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lzboytn/pub/archive
+-rm valspar*.txt
+cd /data/pos/kittles/pub
+lcd /data/guardsman_pos/transfers/kittles/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/kittles/pub/archive
+-rm valspar*.txt
+cd /data/pos/univpool/pub
+lcd /data/guardsman_pos/transfers/univpool/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/univpool/pub/archive
+-rm valspar*.txt
+cd /data/pos/overstoc/pub
+lcd /data/guardsman_pos/transfers/overstoc/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/overstoc/pub/archive
+-rm valspar*.txt
+cd /data/pos/lzboylo/pub
+lcd /data/guardsman_pos/transfers/lzboylo/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lzboylo/pub/archive
+-rm valspar*.txt
+cd /data/pos/lzboycor/pub
+lcd /data/guardsman_pos/transfers/lzboycor/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lzboycor/pub/archive
+-rm valspar*.txt
+cd /data/pos/klopfens/pub
+lcd /data/guardsman_pos/transfers/klopfens/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/klopfens/pub/archive
+-rm valspar*.txt
+cd /data/pos/amerhome/pub
+lcd /data/guardsman_pos/transfers/amerhome/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/amerhome/pub/archive
+-rm valspar*.txt
+cd /data/pos/hdsnbyco/pub
+lcd /data/guardsman_pos/transfers/hdsnbyco/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/hdsnbyco/pub/archive
+-rm valspar*.txt
+cd /data/pos/amecantv/pub
+lcd /data/guardsman_pos/transfers/amecantv/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/amecantv/pub/archive
+-rm valspar*.txt
+cd /data/pos/cmpsfurn/pub
+lcd /data/guardsman_pos/transfers/cmpsfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/cmpsfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/lzboylns/pub
+lcd /data/guardsman_pos/transfers/lzboylns/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lzboylns/pub/archive
+-rm valspar*.txt
+cd /data/pos/stehafel/pub
+lcd /data/guardsman_pos/transfers/stehafel/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/stehafel/pub/archive
+-rm valspar*.txt
+cd /data/pos/broyhden/pub
+lcd /data/guardsman_pos/transfers/broyhden/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/broyhden/pub/archive
+-rm valspar*.txt
+cd /data/pos/lazbyden/pub
+lcd /data/guardsman_pos/transfers/lazbyden/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lazbyden/pub/archive
+-rm valspar*.txt
+cd /data/pos/houtndum/pub
+lcd /data/guardsman_pos/transfers/houtndum/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/houtndum/pub/archive
+-rm valspar*.txt
+cd /data/pos/fortunof/pub
+lcd /data/guardsman_pos/transfers/fortunof/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/fortunof/pub/archive
+-rm valspar*.txt
+cd /data/pos/carlfurn/pub
+lcd /data/guardsman_pos/transfers/carlfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/carlfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/lzboyalb/pub
+lcd /data/guardsman_pos/transfers/lzboyalb/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lzboyalb/pub/archive
+-rm valspar*.txt
+cd /data/pos/jjanosik/pub
+lcd /data/guardsman_pos/transfers/jjanosik/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/jjanosik/pub/archive
+-rm valspar*.txt
+cd /data/pos/alasfurn/pub
+lcd /data/guardsman_pos/transfers/alasfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/alasfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/mealeyfu/pub
+lcd /data/guardsman_pos/transfers/mealeyfu/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/mealeyfu/pub/archive
+-rm valspar*.txt
+cd /data/pos/casalfur/pub
+lcd /data/guardsman_pos/transfers/casalfur/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/casalfur/pub/archive
+-rm valspar*.txt
+cd /data/pos/nf-mart/pub/posfiles
+lcd /data/guardsman_pos/transfers/nf-mart/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/nf-mart/pub/archive
+-rm valspar*.txt
+cd /data/pos/bostint/pub
+lcd /data/guardsman_pos/transfers/bostint/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/bostint/pub/archive
+-rm valspar*.txt
+cd /data/pos/lzboybrk/pub
+lcd /data/guardsman_pos/transfers/lzboybrk/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/lzboybrk/pub/archive
+-rm valspar*.txt
+cd /data/pos/ldrsfurn/pub
+lcd /data/guardsman_pos/transfers/ldrsfurn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/ldrsfurn/pub/archive
+-rm valspar*.txt
+cd /data/pos/offbchfn/pub
+lcd /data/guardsman_pos/transfers/offbchfn/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/offbchfn/pub/archive
+-rm valspar*.txt
+cd /data/pos/acctdefy/pub
+lcd /data/guardsman_pos/transfers/acctdefy/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/acctdefy/pub/archive
+-rm valspar*.txt
+cd /data/pos/furappma/pub
+lcd /data/guardsman_pos/transfers/furappma/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/furappma/pub/archive
+-rm valspar*.txt
+cd /data/pos/grdcocfu/pub
+lcd /data/guardsman_pos/transfers/grdcocfu/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/grdcocfu/pub/archive
+-rm valspar*.txt
+cd /data/pos/famleisu/pub
+lcd /data/guardsman_pos/transfers/famleisu/
+-mget valspar*.txt
+-mput valspar*.txt /data/pos/famleisu/pub/archive
+-rm valspar*.txt
+exit

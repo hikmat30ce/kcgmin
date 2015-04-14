@@ -1,0 +1,25 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<weblogic-web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://www.bea.com/ns/weblogic/weblogic-web-app http://www.bea.com/ns/weblogic/weblogic-web-app/1.0/weblogic-web-app.xsd"
+                  xmlns="http://www.bea.com/ns/weblogic/weblogic-web-app">
+  <session-descriptor>
+    <timeout-secs>7200</timeout-secs>
+  </session-descriptor>
+  <container-descriptor>
+    <!--<prefer-web-inf-classes>true</prefer-web-inf-classes>-->
+    <show-archived-real-path-enabled>true</show-archived-real-path-enabled>
+  </container-descriptor>
+
+  <virtual-directory-mapping>
+    <local-path>/data/soa_weblogic_11g/interfaces</local-path>
+    <!--<local-path>c:/data/interfaces</local-path>-->
+    <url-pattern>/reports/*</url-pattern>
+  </virtual-directory-mapping>
+  <context-root>/</context-root>
+  
+  <work-manager>
+    <name>wm/interfacesworkmanager</name>
+    <ignore-stuck-threads>true</ignore-stuck-threads>
+  </work-manager>
+
+</weblogic-web-app>
