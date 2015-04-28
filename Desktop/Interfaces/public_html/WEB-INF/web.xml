@@ -1,0 +1,54 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
+ 
+  <servlet>
+    <servlet-name>PropertiesServlet</servlet-name>
+    <servlet-class>com.valspar.interfaces.common.servlets.PropertiesServlet</servlet-class>
+    <load-on-startup>90</load-on-startup>  
+  </servlet> 
+  <servlet>
+    <servlet-name>StartUpServlet</servlet-name>
+    <servlet-class>com.valspar.interfaces.common.servlets.StartUpServlet</servlet-class>
+    <load-on-startup>100</load-on-startup>  
+  </servlet>
+  <servlet>
+    <servlet-name>jersey</servlet-name>
+    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <!-- the following is only needed if you want to use the built-in support for mapping pojo objects to json. -->
+    <init-param>
+      <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <load-on-startup>110</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>StartUpServlet</servlet-name>
+    <url-pattern>/StartUpServlet</url-pattern>
+  </servlet-mapping>
+  
+    <servlet-mapping>
+    <servlet-name>PropertiesServlet</servlet-name>
+    <url-pattern>/PropertiesServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>jersey</servlet-name>
+    <url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+
+  <resource-ref>
+   <res-ref-name>tm/TimerManager</res-ref-name>
+   <res-type>commonj.timers.TimerManager</res-type>
+   <res-auth>Container</res-auth>
+   <res-sharing-scope>Unshareable</res-sharing-scope>
+ </resource-ref> 
+ <resource-ref>
+    <res-ref-name>wm/interfacesworkmanager</res-ref-name>
+    <res-type>commonj.work.WorkManager</res-type>
+    <res-auth>Container</res-auth>
+    <res-sharing-scope>Unshareable</res-sharing-scope>
+</resource-ref>
+</web-app>

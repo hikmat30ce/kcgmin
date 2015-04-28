@@ -1,0 +1,57 @@
+body 
+{
+  background-color: #FFFFFF;
+  font-family:Verdana, Arial, Helvetica, sans-serif;
+  font-size: 8pt;
+}
+
+h1, h2
+{
+  border-bottom: 1px solid #0871CE;
+  color: #314142;
+}
+
+h1
+{
+  font-size: 14pt;
+}
+
+h2
+{
+  font-size: 12pt;
+}
+
+table
+{
+  font-size: 1em;
+}
+
+.bold
+{ 
+  font-weight: bold;
+}
+
+.rightalign
+{ 
+  text-align: right;
+}
+
+th 
+{
+  font-weight: bold;
+  text-align: left;
+  padding-right: 15px;
+  color: #314142;
+}
+
+th, td
+{
+  padding-bottom: 5px;
+}
+
+.fileEntry
+{
+  vertical-align: middle;
+  margin: 0px;
+  padding: 0px;
+}

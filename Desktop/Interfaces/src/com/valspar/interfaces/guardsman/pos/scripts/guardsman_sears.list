@@ -1,0 +1,11 @@
+cd /data/pos/sears/ 
+lcd /data/guardsman_pos/transfers/sears/ 
+-mget valspar*.txt 
+-mput valspar*.txt /data/pos/sears/archive 
+-rm valspar*.txt 
+cd /data/pos/atg/ 
+lcd /data/guardsman_pos/transfers/atg/ 
+-mget valspar*.txt 
+-mput valspar*.txt /data/pos/atg/archive 
+-rm valspar*.txt 
+exit

@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://generated.outboundshipmentstatus.shipmentstatus.clx.interfaces.valspar.com"
+           targetNamespace="http://generated.outboundshipmentstatus.shipmentstatus.clx.interfaces.valspar.com"
+           elementFormDefault="qualified">
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"/>
+	<xs:element name="TransactionInformation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="DocId"/>
+				<xs:element ref="Sender"/>
+				<xs:element ref="Receiver"/>
+				<xs:element ref="TransactionHistory"/>
+			</xs:sequence>
+			<xs:attribute name="Version" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="2.0.0"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TransactionHistory">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Transaction" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Transaction">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time"/>
+				<xs:element ref="Sender"/>
+				<xs:element ref="Receiver"/>
+				<xs:element ref="EMail" minOccurs="0"/>
+				<xs:element ref="Comment" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DocId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Name">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Id">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Type">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Description">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OrderNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="PoNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Amount">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="UnitOfMeasure">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="EMail">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Comment">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Organization">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Sender">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Organization"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Receiver">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Organization"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OrganizationName">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OrganizationId">
+		<xs:complexType mixed="true">
+			<xs:attribute name="type">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="SCAC"/>
+						<xs:enumeration value="DUNS"/>
+						<xs:enumeration value="CIFN"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ChildOrganizationId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="LocationCode">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Notes">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Address1"/>
+				<xs:element ref="Address2" minOccurs="0"/>
+				<xs:element ref="Address3" minOccurs="0"/>
+				<xs:element ref="Address4" minOccurs="0"/>
+				<xs:element ref="City"/>
+				<xs:element ref="StateProvince" minOccurs="0"/>
+				<xs:element ref="PostalCode" minOccurs="0"/>
+				<xs:element ref="Country"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Address1">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address2">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address3">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Address4">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="City">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="StateProvince">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Country">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="PostalCode">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Day">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Month">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Year">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Hour">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Minute">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Second">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Millisecond">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="TimeZone">
+		<xs:complexType mixed="true">
+			<xs:attribute name="utcOffset" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Date">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Day"/>
+				<xs:element ref="Month"/>
+				<xs:element ref="Year"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Time">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Hour"/>
+				<xs:element ref="Minute"/>
+				<xs:element ref="Second"/>
+				<xs:element ref="Millisecond" minOccurs="0"/>
+				<xs:element ref="TimeZone"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentStatusTransaction">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TransactionInformation"/>
+				<xs:element ref="ShipmentStatus" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentStatus">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="TransactionId" minOccurs="0"/>
+				<xs:element ref="TransactionType" minOccurs="0"/>
+				<xs:element ref="Shipper"/>
+				<xs:element ref="ShipmentId"/>
+				<xs:element ref="PlannedDepartureDate" minOccurs="0"/>
+				<xs:element ref="SubShipment" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="OtherReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Carrier" minOccurs="0"/>
+				<xs:element ref="ShipmentStatusDetail"/>
+				<xs:element ref="StatusLocation" minOccurs="0"/>
+				<xs:element ref="Equipment" minOccurs="0"/>
+				<xs:element ref="Note" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="TransactionId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="TransactionType">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Shipper">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentId">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="PlannedDepartureDate">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="SubShipment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="BOL"/>
+				<xs:element ref="OtherReference" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="ShipmentCustomer" minOccurs="0"/>
+				<xs:element ref="ShipmentVendor" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BOL">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="OtherReference">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Id"/>
+				<xs:element ref="Type"/>
+				<xs:element ref="Description" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentCustomer">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentVendor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Carrier">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+				<xs:element ref="CarrierSCAC" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CarrierSCAC">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="OrganizationId"/>
+				<xs:element ref="OrganizationName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentStatusDetail">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="ShipmentStatusCode"/>
+					<xs:element ref="ShipmentStatusReason"/>
+					<xs:element ref="ShipmentStatusTime"/>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element ref="ShipmentAppointmentCode"/>
+					<xs:element ref="ShipmentAppointmentReason"/>
+					<xs:element ref="Appointment"/>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element ref="LoadStatusCode"/>
+					<xs:element ref="LoadPlanned"/>
+					<xs:element ref="LoadRequired" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="ShipmentUpdateDetail"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Appointment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="AppointmentNumber" minOccurs="0"/>
+				<xs:choice>
+					<xs:sequence>
+						<xs:element ref="From"/>
+						<xs:element ref="To" minOccurs="0"/>
+					</xs:sequence>
+					<xs:choice>
+						<xs:element ref="To"/>
+					</xs:choice>
+				</xs:choice>
+			</xs:sequence>
+			<xs:attribute name="type">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="DOCK"/>
+						<xs:enumeration value="CARRIER"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="actionCode">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="DELETE"/>
+						<xs:enumeration value="UPDATE"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AppointmentNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="From">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="To">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentAppointmentCode">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="PICKUP"/>
+						<xs:enumeration value="DELIVERY"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentAppointmentReason">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ShipmentStatusCode">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="UNLOADED"/>
+						<xs:enumeration value="EQUIPMENT_RELEASED"/>
+						<xs:enumeration value="LOADED"/>
+						<xs:enumeration value="ARRIVED_AT_PICKUP_LOCATION"/>
+						<xs:enumeration value="CUSTOMS_RELEASED"/>
+						<xs:enumeration value="OUT_GATE"/>
+						<xs:enumeration value="IN_GATE"/>
+						<xs:enumeration value="DEPARTED_DELIVERY_LOCATION"/>
+						<xs:enumeration value="ARRIVED_AT_CUSTOMS"/>
+						<xs:enumeration value="DEPARTED_PICKUP_LOCATION"/>
+						<xs:enumeration value="ARRIVED_AT_DELIVERY_LOCATION"/>
+						<xs:enumeration value="CUSTOMS_HOLD"/>
+						<xs:enumeration value="TRAILER_SPOTTED"/>
+						<xs:enumeration value="CURRENT_LOCATION"/>
+						<xs:enumeration value="ESTIMATED_DELIVERY"/>
+						<xs:enumeration value="ARRIVED_AT_PICKUP_LOCATION_LOADING_DOCK"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentStatusReason">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="ShipmentStatusTime">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Date"/>
+				<xs:element ref="Time"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LoadStatusCode">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="LOAD"/>
+						<xs:enumeration value="UNLOAD"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LoadPlanned">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LoadRequired">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ShipmentUpdateDetail">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="UpdateCode"/>
+				<xs:element ref="PlannedDeparture" minOccurs="0"/>
+				<xs:element ref="PlannedArrival" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="UpdateCode">
+		<xs:complexType>
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="REPLACE"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PlannedDeparture">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PlannedArrival">
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element ref="From"/>
+					<xs:element ref="To" minOccurs="0"/>
+				</xs:sequence>
+				<xs:choice>
+					<xs:element ref="To"/>
+				</xs:choice>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="StatusLocation">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:choice minOccurs="0">
+					<xs:sequence>
+						<xs:element ref="City"/>
+						<xs:element ref="StateProvince" minOccurs="0"/>
+						<xs:element ref="PostalCode" minOccurs="0"/>
+						<xs:element ref="Country" minOccurs="0"/>
+					</xs:sequence>
+					<xs:sequence>
+						<xs:element ref="Longitude"/>
+						<xs:element ref="Latitude"/>
+					</xs:sequence>
+				</xs:choice>
+				<xs:element ref="StopNumber" minOccurs="0"/>
+				<xs:element ref="LocationReference" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Degrees">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Minutes">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Seconds">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Longitude">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Degrees"/>
+				<xs:element ref="Minutes"/>
+				<xs:element ref="Seconds" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Latitude">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Degrees"/>
+				<xs:element ref="Minutes"/>
+				<xs:element ref="Seconds" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="StopNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="LocationReference">
+		<xs:complexType mixed="true">
+			<xs:attribute name="type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:NMTOKEN">
+						<xs:enumeration value="SHIPPER"/>
+						<xs:enumeration value="CITY"/>
+						<xs:enumeration value="SPLC"/>
+						<xs:enumeration value="CENSUS_D"/>
+						<xs:enumeration value="CENSUS_K"/>
+						<xs:enumeration value="UNLOCODE"/>
+						<xs:enumeration value="FSAC"/>
+						<xs:enumeration value="IATA"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Equipment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="EquipmentInitials" minOccurs="0"/>
+				<xs:element ref="TrailerNumber" minOccurs="0"/>
+				<xs:element ref="EquipmentDescription"/>
+				<xs:element ref="EquipmentSize" minOccurs="0"/>
+				<xs:element ref="EquipmentAttribute" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EquipmentInitials">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="TrailerNumber">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="EquipmentDescription">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="EquipmentSize">
+		<xs:complexType>
+			<xs:attribute name="value" use="required" type="xs:anySimpleType"/>
+			<xs:attribute name="unitOfMeasure" use="required" type="xs:anySimpleType"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="EquipmentAttribute">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+	<xs:element name="Note">
+		<xs:complexType mixed="true"/>
+	</xs:element>
+</xs:schema>
