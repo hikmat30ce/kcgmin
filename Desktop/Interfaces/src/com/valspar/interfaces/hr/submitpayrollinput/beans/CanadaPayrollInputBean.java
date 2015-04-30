@@ -11,7 +11,7 @@ public class CanadaPayrollInputBean extends PayrollInputBean
   
   public String getShift()
   {
-    if (StringUtils.isNotEmpty(this.getDollars()))
+    if (StringUtils.isEmpty(shift) && StringUtils.isNotEmpty(this.getDollars()))
     {
       return "R";
     }

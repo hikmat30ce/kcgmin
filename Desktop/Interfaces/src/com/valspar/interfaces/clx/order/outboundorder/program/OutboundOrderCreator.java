@@ -16,7 +16,6 @@ public class OutboundOrderCreator
   public static String createOrderXml(OrderStagingBean orderStagingBean)
   {
     String xmlMessage = null;
-
     try
     {
       OrderLineBean orderLineBean = orderStagingBean.getOrderLineBeanList().get(0);
@@ -123,7 +122,18 @@ public class OutboundOrderCreator
 
       Equipment equipment = new Equipment();
       EquipmentDescription equipmentDescription = new EquipmentDescription();
-      equipmentDescription.setContent(orderLineBean.getEquipmentDescription());
+      if (StringUtils.equalsIgnoreCase(orderLineBean.getEquipmentDescription(), "Y"))
+      {
+        equipmentDescription.setContent("TJ");
+      }
+      else if (orderStagingBean.isTempControlled())
+      {
+        equipmentDescription.setContent("RT");
+      }
+      else
+      {
+        equipmentDescription.setContent("TF");
+      }
       equipment.setEquipmentDescription(equipmentDescription);
       order.setEquipment(equipment);
 
@@ -153,30 +163,38 @@ public class OutboundOrderCreator
       paymentMethod.setValue(orderLineBean.getPaymentMethod());
       order.setPaymentMethod(paymentMethod);
 
+      OrganizationId carrierOrgId = new OrganizationId();
+      carrierOrgId.setContent(orderStagingBean.getCarrierSCAC());
+      Carrier carrier = new Carrier();
+      carrier.setOrganizationId(carrierOrgId);
+      order.setCarrier(carrier);
+
       buildOtherReference(orderLineBean.getReference1(), orderLineBean.getReference1Type(), order, null);
       buildOtherReference(orderLineBean.getReference2(), orderLineBean.getReference2Type(), order, null);
       buildOtherReference(orderLineBean.getReference5(), orderLineBean.getReference5Type(), order, null);
       buildOtherReference(orderLineBean.getReference6(), orderLineBean.getReference6Type(), order, null);
       buildOtherReference(orderLineBean.getReference7(), orderLineBean.getReference7Type(), order, subShipment);
       buildOtherReference(orderLineBean.getReference8(), orderLineBean.getReference8Type(), order, subShipment);
-      buildOtherReference(orderLineBean.getReference14(), orderLineBean.getReference14Type(), order, subShipment);
+      if (orderStagingBean.isTempControlled())
+      {
+        buildOtherReference("Y", orderLineBean.getReference14Type(), order, subShipment);
+      }
       buildOtherReference(orderLineBean.getReference16(), orderLineBean.getReference16Type(), order, subShipment);
+      buildOtherReference(orderLineBean.getReference17(), orderLineBean.getReference17Type(), order, subShipment);
       
       ServiceType serviceType = new ServiceType();
-      serviceType.setValue(orderLineBean.getServiceType());
-
-      for (OrderLineBean currentOrderLine: orderStagingBean.getOrderLineBeanList())
+      if (orderStagingBean.isExpedited())
       {
-        if (StringUtils.equalsIgnoreCase(currentOrderLine.getServiceType(), "EXPEDITE"))
-        {
-          buildOtherReference("EXPEDITE", orderLineBean.getReference9Type(), order, subShipment);
-          serviceType.setValue("EXPEDITE");
-          InternalShipmentPriority internalShipmentPriority = new InternalShipmentPriority();
-          internalShipmentPriority.setContent("EXPEDITE");
-          order.setInternalShipmentPriority(internalShipmentPriority);
-        }
+        buildOtherReference("EXPEDITE", orderLineBean.getReference9Type(), order, subShipment);
+        serviceType.setValue("EXPEDITE");
+        InternalShipmentPriority internalShipmentPriority = new InternalShipmentPriority();
+        internalShipmentPriority.setContent("EXPEDITE");
+        order.setInternalShipmentPriority(internalShipmentPriority);
       }
-
+      else
+      {
+        serviceType.setValue(orderLineBean.getServiceType());
+      }
       order.setServiceType(serviceType);
 
       Shipper shipper = new Shipper();
@@ -319,9 +337,7 @@ public class OutboundOrderCreator
       sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
       sb.append("<!DOCTYPE OrderTransaction PUBLIC \"Order\" \"Order.dtd\">\n");
       sb.append(baos.toString("UTF-8"));
-
       xmlMessage = sb.toString();
-      log4jLogger.info("OutboundOrderCreator.createOrderXml XML message is: " + xmlMessage);
   }
   catch (Exception e)
   {

@@ -122,7 +122,7 @@ public class GuardsmanPlanDeliveryInterface extends BaseInterface
 
     for (int i = 1; i <= workerThreadCount; i++)
     {
-      GuardsmanPlanDeliveryThread worker = new GuardsmanPlanDeliveryThread(getInterfaceInfo(), String.valueOf(i), mode);
+      GuardsmanPlanDeliveryThread worker = new GuardsmanPlanDeliveryThread(getInterfaceInfoBean(), String.valueOf(i), mode);
       worker.setInProduction(isInProduction());
       worker.setPlansToProcess(plansToProcess);
       worker.setUetaNotifiedPlans(uetaNotifiedPlans);

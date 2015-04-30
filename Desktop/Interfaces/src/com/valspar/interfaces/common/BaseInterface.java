@@ -25,7 +25,7 @@ public abstract class BaseInterface implements Job
   private String processId;
   private String interfaceId;
   private String interfaceName;
-  private InterfaceInfoBean interfaceInfo;
+  private InterfaceInfoBean interfaceInfoBean;
 
   private OracleConnection logConn;
   private List<ConnectionBean> fromConn = new ArrayList<ConnectionBean>();
@@ -38,8 +38,9 @@ public abstract class BaseInterface implements Job
   private static final String DIRECTION_TO = "to";
 
   private Date startDate;
-  private static final DateFormat df = new SimpleDateFormat("MM-dd-yyyy-hh-mm-ss");
+  private static final DateFormat df = new SimpleDateFormat("MM-dd-yyyy-HH-mm-ss");
   private JobExecutionContext context;
+  private boolean deleteLogFile;
 
   public BaseInterface()
   {    
@@ -82,10 +83,10 @@ public abstract class BaseInterface implements Job
     setInterfaceName(jobKey);
     setStartDate(new Date());
 
-    String logFileLocation = buildLogFileLocation();
-    InterfaceInfoBean interfaceInfo = new InterfaceInfoBean(logFileLocation);
-    setInterfaceInfo(interfaceInfo);
-    InterfaceThreadManager.addInterfaceThread(interfaceInfo);
+    File logFile = buildLogFileLocation();
+    InterfaceInfoBean interfaceInfoBean = new InterfaceInfoBean(logFile);
+    setInterfaceInfoBean(interfaceInfoBean);
+    InterfaceThreadManager.addInterfaceThread(interfaceInfoBean);
 
     log4jLoggerBase.info(interfaceName + " Started ...");
     logConn = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.MIDDLEWARE);
@@ -93,10 +94,10 @@ public abstract class BaseInterface implements Job
     processStart();
     log4jLoggerBase.info("Interface Process ID = " + processId);
 
-    interfaceInfo.setProcessId(processId);
+    interfaceInfoBean.setProcessId(processId);
   }
 
-  private String buildLogFileLocation()
+  private File buildLogFileLocation()
   {
     String className = this.getClass().getName();
     // --> com.valspar.interfaces.purchasing.cipace.program.CipAceInterface
@@ -115,7 +116,7 @@ public abstract class BaseInterface implements Job
     sb.append(df.format(startDate));
     sb.append(".log");
     
-    return sb.toString(); 
+    return new File (sb.toString()); 
   }
 
   public BaseInterface(String interfaceName, String dbEnvironment)
@@ -174,7 +175,7 @@ public abstract class BaseInterface implements Job
       pst2.setString(1, processId);
       pst2.setString(2, interfaceId);
       pst2.setDATE(3, JDBCUtil.getDATE(startDate));
-      pst2.setString(4, getInterfaceInfo().getLogFileLocation());
+      pst2.setString(4, getInterfaceInfoBean().getLogFile().getCanonicalPath());
       pst2.executeUpdate();
     }
     catch (Exception e)
@@ -439,6 +440,10 @@ public abstract class BaseInterface implements Job
     finally
     {
       InterfaceThreadManager.removeInterfaceThread();
+      if (this.isDeleteLogFile())
+      {
+        this.getInterfaceInfoBean().getLogFile().delete();
+      }
     }
   }
 
@@ -527,16 +532,6 @@ public abstract class BaseInterface implements Job
     return interfaceId;
   }
 
-  private void setInterfaceInfo(InterfaceInfoBean interfaceInfo)
-  {
-    this.interfaceInfo = interfaceInfo;
-  }
-
-  public InterfaceInfoBean getInterfaceInfo()
-  {
-    return interfaceInfo;
-  }
-
   public void setStartDate(Date startDate)
   {
     this.startDate = startDate;
@@ -555,5 +550,25 @@ public abstract class BaseInterface implements Job
   protected JobExecutionContext getContext()
   {
     return context;
+  }
+
+  public void setDeleteLogFile(boolean deleteLogFile)
+  {
+    this.deleteLogFile = deleteLogFile;
+  }
+
+  public boolean isDeleteLogFile()
+  {
+    return deleteLogFile;
+  }
+
+  public void setInterfaceInfoBean(InterfaceInfoBean interfaceInfoBean)
+  {
+    this.interfaceInfoBean = interfaceInfoBean;
+  }
+
+  public InterfaceInfoBean getInterfaceInfoBean()
+  {
+    return interfaceInfoBean;
   }
 }

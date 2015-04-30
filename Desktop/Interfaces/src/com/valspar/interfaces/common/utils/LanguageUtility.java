@@ -1,22 +1,63 @@
 package com.valspar.interfaces.common.utils;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
-import java.nio.CharBuffer;
+import com.valspar.interfaces.common.beans.ConnectionAccessBean;
+import com.valspar.interfaces.common.enums.DataSource;
+import com.valspar.interfaces.wercs.common.beans.WercsLanguageBean;
 import java.sql.Statement;
-import oracle.jdbc.OracleConnection;
+import java.util.*;
+import oracle.jdbc.*;
 import org.apache.log4j.Logger;
 
 public class LanguageUtility
 {
   private static Logger log4jLogger = Logger.getLogger(LanguageUtility.class);
+  private static Map<String, WercsLanguageBean> languages;
 
-  public LanguageUtility()
+  static
   {
-  }    
-  
+    populateLanguages();
+  }
+
+  public static void populateLanguages()
+  {
+    // http://www.science.co.il/Language/Character-sets.asp
+
+    OracleConnection conn = (OracleConnection)ConnectionAccessBean.getConnection(DataSource.WERCS);
+    OraclePreparedStatement pst = null;
+    OracleResultSet rs = null;
+
+    languages = new HashMap<String, WercsLanguageBean>();
+
+    try
+    {
+      StringBuilder sb = new StringBuilder();
+      sb.append("select language, database_charset_name, windows_charset_name ");
+      sb.append("from vca_languages ");
+
+      pst = (OraclePreparedStatement) conn.prepareStatement(sb.toString());
+      rs = (OracleResultSet) pst.executeQuery();
+
+      while (rs.next())
+      {
+        WercsLanguageBean bean = new WercsLanguageBean();
+        bean.setLanguage(rs.getString("language"));
+        bean.setDatabaseCharsetName(rs.getString("database_charset_name"));
+        bean.setWindowsCharsetName(rs.getString("windows_charset_name"));
+
+        languages.put(bean.getLanguage(), bean);
+      }
+    }
+    catch (Exception e)
+    {
+      log4jLogger.error(e);
+    }
+    finally
+    {
+      JDBCUtil.close(pst, rs);
+      JDBCUtil.close(conn);
+    }
+  }
+
   public static String updateWercsDescriptionTranslation(String alias, String productDescription, String language, OracleConnection conn)
   {
     String returnValue = "success";
@@ -50,284 +91,58 @@ public class LanguageUtility
     finally
     {
       JDBCUtil.close(stmt);
-    } 
+    }
     return returnValue;
   }
-  
-  public static String convertDataToWindowsEncoding(String data, String language) 
+
+  public static String convertDataFromWindowsEncoding(String data, String language)
   {
-    String result = "";
-    try
+    if ("SN".equals(language))
     {
-      if (language != null && language.equalsIgnoreCase("EL")) //Greek
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("windows-1253");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("RU") || language != null && language.equalsIgnoreCase("BG"))
-      //Russian,Bulgarian
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("windows-1251");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("CN")) //Chinese Simplified
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("GBK");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("KO")) //Korean
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("EUC-KR");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("LT") || language != null && language.equalsIgnoreCase("LV") || language != null && language.equalsIgnoreCase("ET")) //Lithuanian,Latvian,Estonian
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("windows-1257");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("SN") || language != null && language.equalsIgnoreCase("RO") || language != null && language.equalsIgnoreCase("CR") || language != null && language.equalsIgnoreCase("CS") || language != null && language.equalsIgnoreCase("PL") || language != null && language.equalsIgnoreCase("HU")) //Slovenian,Romanian,Croatian,Czech,Polish,Hungarian
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("windows-1250");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("TA")) //Chinese Traditional
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("Big5-HKSCS");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("TH")) //Thailand
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("TIS-620");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("TR")) //Turkish
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("windows-1254");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("AR")) //ARABIC
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("windows-1256");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("HE")) //HEBREW
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("windows-1255");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("JP")) //Japanese
-      {
-        Charset databaseCharset = Charset.forName("X-ORACLE-WE8MSWIN1252");
-        CharsetEncoder databaseEncoder = databaseCharset.newEncoder();
-        Charset windowsCharset = Charset.forName("Shift_JIS");
-        CharsetDecoder windowsDecoder = windowsCharset.newDecoder();
-        ByteBuffer dbByteBuf = databaseEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = windowsDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else
-      {
-        result = data;
-      }
+      // temporary bridge for Slovenian that changed language codes between 5x and 6x
+      language = "SL";
     }
-    catch (Exception e)
+
+    WercsLanguageBean languageBean = languages.get(language);
+
+    if (languageBean == null)
     {
-      result = "INVALID TRANSLATION";
+      throw new RuntimeException("language " + language + " is not supported!");
     }
-    return result;
+
+    if (languageBean.needsConversion())
+    {
+      return languageBean.convertFromWindowsEncoding(data);
+    }
+    else
+    {
+      return data;
+    }
   }
 
-  public static String convertDataFromWindowsEncoding(String data, String language) 
+  public static String convertDataToWindowsEncoding(String data, String language)
   {
-    String result = "";
-    try
+    if ("SN".equals(language))
     {
-      if (language != null && language.equalsIgnoreCase("EL")) //Greek
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("windows-1253");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("RU") || language != null && language.equalsIgnoreCase("BG"))
-      //Russian,Bulgarian
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("windows-1251");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("CN")) //Chinese Simplified
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("GBK");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("KO")) //Korean
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("EUC-KR");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("LT") || language != null && language.equalsIgnoreCase("LV") || language != null && language.equalsIgnoreCase("ET")) //Lithuanian,Latvian,Estonian
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("windows-1257");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("SN") || language != null && language.equalsIgnoreCase("RO") || language != null && language.equalsIgnoreCase("CR") || language != null && language.equalsIgnoreCase("CS") || language != null && language.equalsIgnoreCase("PL") || language != null && language.equalsIgnoreCase("HU")) //Slovenian,Romanian,Croatian,Czech,Polish,Hungarian
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("windows-1250");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("TA")) //Chinese Traditional
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("Big5-HKSCS");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("TH")) //Thailand
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("TIS-620");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("TR")) //Turkish
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("windows-1254");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("AR")) //ARABIC
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("windows-1256");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("HE")) //HEBREW
-      {
-        Charset databaseCharset = Charset.forName("windows-1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("windows-1255");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else if (language != null && language.equalsIgnoreCase("JP")) //Japanese
-      {
-        Charset databaseCharset = Charset.forName("X-ORACLE-WE8MSWIN1252");
-        CharsetDecoder databaseDecoder = databaseCharset.newDecoder();
-        Charset windowsCharset = Charset.forName("Shift_JIS");
-        CharsetEncoder windowsEncoder = windowsCharset.newEncoder();
-        ByteBuffer dbByteBuf = windowsEncoder.encode(CharBuffer.wrap(data));
-        CharBuffer dbCharBuf = databaseDecoder.decode(dbByteBuf);
-        result = dbCharBuf.toString();
-      }
-      else
-      {
-        result = data;
-      }
+      // temporary bridge for Slovenian that changed language codes between 5x and 6x
+      language = "SL";
     }
-    catch (Exception e)
+
+    WercsLanguageBean languageBean = languages.get(language);
+
+    if (languageBean == null)
     {
-      result = "INVALID TRANSLATION";
+      throw new RuntimeException("language " + language + " is not supported!");
     }
-    return result;
+
+    if (languageBean.needsConversion())
+    {
+      return languageBean.convertToWindowsEncoding(data);
+    }
+    else
+    {
+      return data;
+    }
   }
 }
 

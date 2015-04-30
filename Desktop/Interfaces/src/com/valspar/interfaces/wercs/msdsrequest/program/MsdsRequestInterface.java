@@ -97,7 +97,15 @@ public class MsdsRequestInterface extends BaseInterface
     {
       if (StringUtils.equalsIgnoreCase("MassMSDS", requestBean.getRequestType()) || StringUtils.equalsIgnoreCase("CustomerMsds", requestBean.getRequestType()))
       {
-        writePDFFiles(requestBean);
+        if(StringUtils.equalsIgnoreCase(requestBean.getExtractFrom(), "Archive"))
+        {
+          writePDFFiles(requestBean, "WERCS.T_PDF_MSDS@RHST.VALSPAR.COM");  
+          writePDFFiles(requestBean, "WERCS.T_PDF_MSDS@RGHT.VALSPAR.COM");    
+        }
+        else
+        {
+          writePDFFiles(requestBean, "WERCS.T_PDF_MSDS");
+        }
       }
       else if (StringUtils.equalsIgnoreCase("QuickFDS", requestBean.getRequestType()))
       {
@@ -143,59 +151,15 @@ public class MsdsRequestInterface extends BaseInterface
     log4jLogger.info("Done processing group.  Going to pick up more from VCA_MSDS_REQUEST_QUEUE.");
   }
 
-  public void writePDFFiles(RequestBean rb)
+  public void writePDFFiles(RequestBean rb, String fromTableTPdfMsds)
   {
-    PreparedStatement pstmt = null;
-    OracleResultSet rs = null;
-    StringBuilder sb = new StringBuilder();
-    sb.append("SELECT replace(replace(C.PRODUCT,'/'),'\\'), DECODE(A.F_SUBFORMAT,'PDS','CPDS',A.F_SUBFORMAT), A.F_LANGUAGE, ");
-    sb.append("F_PRODUCT_NAME, to_char(F_DATE_REVISED,'MM/DD/YY'), (select upc_code from ic_item_mst@tona where item_no = C.product) as upc, ");
-    sb.append("f_pdf ");
-
-    if (rb.getExtractFrom().equalsIgnoreCase("Archive"))
-    {
-      sb.append("FROM WERCS.T_PDF_MSDS@RHST.VALSPAR.COM A, ");
-    }
-    else
-    {
-      sb.append("FROM WERCS.T_PDF_MSDS A, ");
-    }
-    sb.append("wercs.vca_msds_request_queue b, ");
-    sb.append("WERCS.VCA_MSDS_REQUEST_PRODUCTS C,   ");
-    sb.append("vca_msds_customer d, vca_msds_subformat e, vca_msds_language f ");
-    sb.append("WHERE C.REQUEST_ID = ? ");
-    sb.append("and b.request_id = c.request_id ");
-    sb.append("and b.customer_id = d.customer_id (+)  ");
-    sb.append("and d.customer_id = e.customer_id (+) ");
-    sb.append("and e.subformat_id = f.subformat_id (+)  ");
-    sb.append("and a.f_pdf is not null ");
-    sb.append("and A.F_SUBFORMAT = NVL(e.subformat,A.F_SUBFORMAT) ");
-    sb.append("and a.f_language = nvl(F.SUBFORMAT_LANGUAGE, a.f_language) ");
-    sb.append("AND A.F_PRODUCT = get_published_alias(C.PRODUCT) ");
-    if (rb.getExtractFrom().equalsIgnoreCase("Valapps"))
-    {
-      sb.append("AND F_AUTHORIZED <> 0 ");
-    }
-    sb.append("AND a.f_date_stamp = ");
-    sb.append("                (SELECT MAX (f_date_stamp) ");
-    if (rb.getExtractFrom().equalsIgnoreCase("Archive"))
-    {
-      sb.append("                   FROM t_pdf_msds@RHST.VALSPAR.COM ");
-    }
-    else
-    {
-      sb.append("                   FROM t_pdf_msds ");
-    }
-    sb.append("                  WHERE     f_product = a.f_product ");
-    sb.append("                        AND f_subformat = a.f_subformat ");
-    sb.append("                        AND f_language = a.f_language) ");
-    sb.append("ORDER BY A.F_PRODUCT, A.F_SUBFORMAT ASC, A.F_DATE_STAMP desc ");
-
+    OraclePreparedStatement pst = null;
+    ResultSet rs = null;
     try
     {
-      pstmt = getWercsConn().prepareStatement(sb.toString());
-      pstmt.setString(1, rb.getRequestId());
-      rs = (OracleResultSet) pstmt.executeQuery();
+      pst = (OraclePreparedStatement) getWercsConn().prepareStatement(buildPDFfileSql(rb, fromTableTPdfMsds ));
+      pst.setStringAtName("REQUESTID", rb.getRequestId());
+      rs = pst.executeQuery();
 
       while (rs.next())
       {
@@ -239,8 +203,43 @@ public class MsdsRequestInterface extends BaseInterface
     }
     finally
     {
-      JDBCUtil.close(pstmt, rs);
+      JDBCUtil.close(pst, rs);
     }
+  }
+
+  private String buildPDFfileSql(RequestBean rb, String fromTableTPdfMsds)
+  {
+    StringBuilder sb = new StringBuilder();
+    sb.append("SELECT replace(replace(C.PRODUCT,'/'),'\\'), DECODE(A.F_SUBFORMAT,'PDS','CPDS',A.F_SUBFORMAT), A.F_LANGUAGE, ");
+    sb.append("A.F_PRODUCT_NAME, to_char(A.F_DATE_REVISED,'MM/DD/YY'), (select upc_code from ic_item_mst@tona where item_no = C.product) as upc, ");
+    sb.append("A.f_pdf FROM ");
+    sb.append(fromTableTPdfMsds);
+    sb.append(" A, ");
+    sb.append("wercs.vca_msds_request_queue b, ");
+    sb.append("WERCS.VCA_MSDS_REQUEST_PRODUCTS C,   ");
+    sb.append("vca_msds_customer d, vca_msds_subformat e, vca_msds_language f ");
+    sb.append("WHERE C.REQUEST_ID = :REQUESTID ");
+    sb.append("and b.request_id = c.request_id ");
+    sb.append("and b.customer_id = d.customer_id (+)  ");
+    sb.append("and d.customer_id = e.customer_id (+) ");
+    sb.append("and e.subformat_id = f.subformat_id (+)  ");
+    sb.append("and a.f_pdf is not null ");
+    sb.append("and A.F_SUBFORMAT = NVL(e.subformat,A.F_SUBFORMAT) ");
+    sb.append("and a.f_language = nvl(F.SUBFORMAT_LANGUAGE, a.f_language) ");
+    sb.append("AND A.F_PRODUCT = c.published_alias ");
+    if (rb.getExtractFrom().equalsIgnoreCase("Valapps"))
+    {
+      sb.append("AND F_AUTHORIZED <> 0 ");
+    }
+    sb.append("and A.F_SUBFORMAT not in ('SRFR','SRFG','SRRM') ");
+    sb.append("AND a.f_date_stamp = ");
+    sb.append("                (SELECT MAX (f_date_stamp) FROM ");
+    sb.append(fromTableTPdfMsds);
+    sb.append("                  WHERE     f_product = a.f_product ");
+    sb.append("                        AND f_subformat = a.f_subformat ");
+    sb.append("                        AND f_language = a.f_language) ");
+    sb.append(" ORDER BY 1, 2, 5 desc ");
+    return sb.toString();
   }
 
   public void createIndexFile(RequestBean rb)

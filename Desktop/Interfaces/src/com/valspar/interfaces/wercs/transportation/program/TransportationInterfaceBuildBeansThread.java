@@ -49,7 +49,7 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
     }
     else if (StringUtils.equalsIgnoreCase(this.getType(), "AIR"))
     {
-      buildProductAirBean(getId(),getBulk(), getAlias(), getContainer(), getAr());
+      buildProductAirBean(getId(), getBulk(), getAlias(), getContainer(), getAr());
     }
     else if (StringUtils.equalsIgnoreCase(this.getType(), "WATER"))
     {
@@ -64,10 +64,20 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
       ProductBean lb = new ProductBean();
       lb.setDataCodes(getDataCodeValues(bulk, TRANS_LAND_DATA_CODES));
       lb.setTextCodes(getTextCodeValues(bulk, TRANS_LAND_TEXT_CODES));
-      lb.setUnNumber(lb.getData(UND));
-      lb.setEuUnNumber(lb.getData(UNA));
-      lb.setShippingName(getTextPhrase(lb.getText(PSND)));
-      lb.setEuShippingName(lb.getText(PSNA));
+      if (isTextCodeExist(bulk, "NRREG001"))
+      {
+        lb.setUnNumber("NRREG");
+        lb.setEuUnNumber("NRREG");
+        lb.setShippingName("NOT REGULATED");
+        lb.setEuShippingName("NOT REGULATED");
+      }
+      else
+      {
+        lb.setUnNumber(lb.getData(UND));
+        lb.setEuUnNumber(lb.getData(UNA));
+        lb.setShippingName(getTextPhrase(lb.getText(PSND)));
+        lb.setEuShippingName(lb.getText(PSNA));
+      }
       lb.setHazardClass(lb.getData(HCD));
       lb.setEuHazardClass(lb.getData(HCA));
       lb.setSubsidaryRisk(lb.getData(SCD));
@@ -124,17 +134,27 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
       ProductBean ab = new ProductBean();
       ab.setDataCodes(getDataCodeValues(bulk, TRANS_AIR_DATA_CODES));
       ab.setTextCodes(getTextCodeValues(bulk, TRANS_AIR_TEXT_CODES));
-      ab.setUnNumber(ab.getData(UNI));
-      ab.setEuUnNumber(ab.getData(UNI));
-      ab.setShippingName(getTextPhrase(ab.getText(PSNI)));
-      ab.setEuShippingName(ab.getText(PSNI));
+      if (isTextCodeExist(bulk, "NRREG001"))
+      {
+        ab.setUnNumber("NRREG");
+        ab.setEuUnNumber("NRREG");
+        ab.setShippingName("NOT REGULATED");
+        ab.setEuShippingName("NOT REGULATED");
+      }
+      else
+      {
+        ab.setUnNumber(ab.getData(UNI));
+        ab.setEuUnNumber(ab.getData(UNI));
+        ab.setShippingName(getTextPhrase(ab.getText(PSNI)));
+        ab.setEuShippingName(ab.getText(PSNI));
+      }
       ab.setHazardClass(ab.getData(HCI));
       ab.setEuHazardClass(ab.getData(HCI));
       ab.setSubsidaryRisk(ab.getData(SCI));
       ab.setEuSubsidaryRisk(ab.getData(SCI));
       ab.setPackingGroup(ab.getData(PGI));
       ab.setEuPackingGroup(ab.getData(PGI));
-     // ab.setErgCode(ab.getData(ERGC));
+      // ab.setErgCode(ab.getData(ERGC));
       ab.setHazLabel1(ab.getData(IATAHL1));
       ab.setEuHazLabel1(ab.getData(IATAHL1));
       ab.setHazLabel2(ab.getData(IATAHL2));
@@ -162,7 +182,7 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
       ab.setEuHazQty2(ZERO);
       ab.setUnNumSeq(null);
       ab.setZLabel(null);
-    //  ab.setLimitedQuantity(ab.getData(ITLQ));
+      //  ab.setLimitedQuantity(ab.getData(ITLQ));
       ab.setLimitedQuantity(getLimitedQty(ab));
       ab.setBulkFlag(isBulk(ab));
       ab.setViscosityException(ZERO);
@@ -184,10 +204,21 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
       ProductBean wb = new ProductBean();
       wb.setDataCodes(getDataCodeValues(bulk, TRANS_WATR_DATA_CODES));
       wb.setTextCodes(getTextCodeValues(bulk, TRANS_WATR_TEXT_CODES));
-      wb.setUnNumber(wb.getData(UNM));
-      wb.setEuUnNumber(wb.getData(UNM));
-      wb.setShippingName(getTextPhrase(wb.getText(PSNM)));
-      wb.setEuShippingName(wb.getText(PSNM));
+
+      if (isTextCodeExist(bulk, "NRREG001"))
+      {
+        wb.setUnNumber("NRREG");
+        wb.setEuUnNumber("NRREG");
+        wb.setShippingName("NOT REGULATED");
+        wb.setEuShippingName("NOT REGULATED");
+      }
+      else
+      {
+        wb.setUnNumber(wb.getData(UNM));
+        wb.setEuUnNumber(wb.getData(UNM));
+        wb.setShippingName(getTextPhrase(wb.getText(PSNM)));
+        wb.setEuShippingName(wb.getText(PSNM));
+      }
       wb.setHazardClass(wb.getData(HCM));
       wb.setEuHazardClass(wb.getData(HCM));
       wb.setSubsidaryRisk(wb.getData(SCM));
@@ -222,7 +253,7 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
       wb.setEuHazQty2(ZERO);
       wb.setUnNumSeq(null);
       wb.setZLabel(null);
-     // wb.setLimitedQuantity(wb.getData(IMLQ));
+      // wb.setLimitedQuantity(wb.getData(IMLQ));
       wb.setLimitedQuantity(getLimitedQty(wb));
       wb.setBulkFlag(isBulk(wb));
       wb.setViscosityException(getViscosityEx(wb, "NA"));
@@ -328,25 +359,9 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
   private String getNosIngredients(ProductBean pb)
   {
     String returnString = "";
-    String ingred1 = null;
-    String ingred2 = null;
-
-    if (StringUtils.equalsIgnoreCase(pb.getShipMethod(), LAND))
-    {
-      ingred1 = pb.getData(TRLNG1);
-      ingred2 = pb.getData(TRLNG2);
-    }
-    else if (StringUtils.equalsIgnoreCase(pb.getShipMethod(), AIR))
-    {
-      ingred1 = pb.getData(TRANG1);
-      ingred2 = pb.getData(TRANG2);
-    }
-    else if (StringUtils.equalsIgnoreCase(pb.getShipMethod(), WATR))
-    {
-      ingred1 = pb.getData(TRWNG1);
-      ingred2 = pb.getData(TRWNG2);
-    }
-
+    String ingred1 = pb.getData(TN1);
+    ;
+    String ingred2 = pb.getData(TN2);
     int ingred1Length = StringUtils.length(ingred1);
     int ingred2Length = StringUtils.length(ingred2);
 
@@ -461,7 +476,7 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
       rs = stmt.executeQuery(sql.toString());
       if (rs.next())
       {
-        if(rs.getInt(1) >0 )
+        if (rs.getInt(1) > 0)
         {
           viscostityEx = Constants.ONE;
         }
@@ -478,7 +493,7 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
     }
     return viscostityEx;
   }
-  
+
   private String getLimitedQty(ProductBean pb)
   {
     String limitedQty = ZERO;
@@ -506,7 +521,7 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
       {
         if ((limitedQty.equalsIgnoreCase(ONE)) && (getLimitQtyRs.getString(7) != null))
         {
-         /* pb.setUnNumber(getLimitQtyRs.getString(7));
+          /* pb.setUnNumber(getLimitQtyRs.getString(7));
           pb.setShippingName(getLimitQtyRs.getString(8));
           pb.setShipMethod(LAND);
           pb.setHazardClass(EMPTY_STRING);
@@ -525,7 +540,6 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
     }
     return limitedQty;
   }
-
 
   private boolean isBulk(ProductBean pb)
   {
@@ -559,7 +573,7 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
     }
     return isBulkValue;
   }
-  
+
   public static String getTextPhrase(String textCode)
   {
     OracleConnection wercsConn = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.WERCS);
@@ -568,6 +582,26 @@ public class TransportationInterfaceBuildBeansThread implements Runnable, Consta
     sb.append("where a.f_phrase_id = b.f_phrase_id and a.f_text_code = ? ");
     sb.append(" and b.f_language = 'EN' ");
     return ValsparLookUps.queryForSingleValue(wercsConn, sb.toString(), textCode);
+  }
+
+  private boolean isTextCodeExist(String product, String textCode)
+  {
+    OracleConnection wercsConn = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.WERCS);
+    StringBuilder sb = new StringBuilder();
+    sb.append("SELECT 'X' FROM   T_PROD_TEXT ");
+    sb.append("WHERE  F_TEXT_CODE = ");
+    sb.append(CommonUtility.toVarchar(textCode));
+    sb.append(" and F_PRODUCT = ");
+    sb.append(CommonUtility.toVarchar(product));
+    String existFlag = ValsparLookUps.queryForSingleValue(wercsConn, sb.toString());
+    if (StringUtils.isEmpty(existFlag))
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
   }
 
   public void setConn(Connection conn)

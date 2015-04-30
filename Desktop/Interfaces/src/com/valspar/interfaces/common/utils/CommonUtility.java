@@ -4,15 +4,14 @@ import com.valspar.interfaces.common.Constants;
 import com.valspar.interfaces.common.enums.DataSource;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import org.apache.log4j.Logger;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import com.valspar.interfaces.common.servlets.PropertiesServlet;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import org.apache.commons.collections.*;
+
 
 public final class CommonUtility
 {
@@ -186,12 +185,25 @@ public static String convertPhoneNumberToCountryFormat(String countryCode, Strin
     return String.format("'%s'", value);
   }
   
+  public static String stringToInListForVarchar(List<String> selectList)
+  {
+    Collection c = CollectionUtils.collect(selectList, TransformerUtils.invokerTransformer("toString"));
+    return String.format("'%s'", StringUtils.join(c, "','"));
+  }
+  
   public static List<DataSource> getERPDataSourceList()
   {
     List<DataSource> dsList = new ArrayList<DataSource>();
     dsList.add(DataSource.NORTHAMERICAN);
     dsList.add(DataSource.ASIAPAC);
     dsList.add(DataSource.EMEAI);
+    return dsList;
+  }
+  
+  public static List<DataSource> getERPDataSourceList6X()
+  {
+    List<DataSource> dsList = new ArrayList<DataSource>();
+    dsList.add(DataSource.EMEAI6X);
     return dsList;
   }
 }

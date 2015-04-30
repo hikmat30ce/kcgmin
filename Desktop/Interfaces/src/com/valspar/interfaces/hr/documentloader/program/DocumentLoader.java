@@ -18,7 +18,7 @@ public class DocumentLoader extends BaseInterface
   {
     try
     {
-      log4jLogger.info("Running D/C:/Users/kcgmin/Desktop/MylocalRepo/Interfaces/Interfaces.jprocumentLoader");
+      log4jLogger.info("Running DocumentLoader");
       
       StaffingAPI staffingAPI = new StaffingAPI();      
       for(File file: FileUtils.listFiles(new File("C:\\data\\noncompete"), null, false))

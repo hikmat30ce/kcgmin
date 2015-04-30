@@ -3,6 +3,7 @@ package com.valspar.interfaces.clx.order.outboundorder.program;
 import com.valspar.clx.returnvalue.generated.ReturnValue;
 import com.valspar.interfaces.clx.common.api.CLXBaseImportAPI;
 import com.valspar.interfaces.clx.common.beans.*;
+import com.valspar.interfaces.clx.common.dao.ClxDAO;
 import com.valspar.interfaces.clx.order.outboundorder.dao.OutboundOrderDAO;
 import com.valspar.interfaces.common.BaseInterface;
 import com.valspar.interfaces.common.servlets.PropertiesServlet;
@@ -15,53 +16,64 @@ public class OutboundOrder extends BaseInterface
 {
   private static Logger log4jLogger = Logger.getLogger(OutboundOrder.class);
 
-  public OutboundOrder()
-  {
-  }
-
   public void execute()
   {
-    log4jLogger.info("Starting CLX Outbound Order Interface...");
-    String senderIdKey = getParameterValue("senderIdKey");
     OrderStagingBean lastOrderStagingBean = null;
-
+    boolean deleteOrderLogFile = true;
     try
     {
-      for (OrderStagingBean orderStagingBean: OutboundOrderDAO.fetchOrderNumbers(senderIdKey))
+      log4jLogger.info("Starting CLX Outbound Order Interface...");
+      List<OrderStagingBean> orderStagingBeanList = OutboundOrderDAO.fetchOrders(getParameterValue("senderIdKey"));
+      if (!orderStagingBeanList.isEmpty())
       {
-        log4jLogger.info("Processing transId: " + orderStagingBean.getTransId());
-        orderStagingBean.setSenderId(PropertiesServlet.getProperty(senderIdKey));
-        orderStagingBean.setSenderIdKey(senderIdKey);
-        lastOrderStagingBean = orderStagingBean;
-        if (orderStagingBean.isDeleteAction())
+        ClxDAO.updateStagingTableForList(orderStagingBeanList);
+        for (OrderStagingBean orderStagingBean: orderStagingBeanList)
         {
-          orderStagingBean.setOrderLineBeanList(buildOrderLineBeanForDelete(orderStagingBean));
+          deleteOrderLogFile = false;
+          log4jLogger.info("Processing transId: " + orderStagingBean.getTransId());
+          lastOrderStagingBean = orderStagingBean;
+          if (orderStagingBean.isDeleteAction())
+          {
+            orderStagingBean.setOrderLineBeanList(buildOrderLineBeanForDelete(orderStagingBean));
+          }
+          else
+          {
+            orderStagingBean.setOrderLineBeanList(OutboundOrderDAO.fetchOrderLines(orderStagingBean));
+          }
+          log4jLogger.info("orderLineBeanList size:" + orderStagingBean.getOrderLineBeanList().size());
+          if (!orderStagingBean.getOrderLineBeanList().isEmpty())
+          {
+            if (!orderStagingBean.isDeleteAction())
+            {
+              OutboundOrderDAO.populateTempControl(orderStagingBean);
+            }
+            importOrder(orderStagingBean);
+          }
+          else
+          {
+            log4jLogger.info("orderLineBeanList is empty!");
+            orderStagingBean.setReturnMessage("No order lines found");
+            orderStagingBean.setReturnCode("E");
+            ClxDAO.updateStagingTableForBean(orderStagingBean);
+          }
+          log4jLogger.info("Completed processing transId: " + orderStagingBean.getTransId());
         }
-        else
-        {
-          orderStagingBean.setOrderLineBeanList(OutboundOrderDAO.fetchOrderLines(orderStagingBean));
-        }
-        log4jLogger.info("orderLineBeanList size:" + orderStagingBean.getOrderLineBeanList().size());
-        if (!orderStagingBean.getOrderLineBeanList().isEmpty())
-        {
-          importOrder(orderStagingBean);
-        }
-        else
-        {
-          log4jLogger.info("orderLineBeanList is empty!");
-          orderStagingBean.setReturnMessage("No order lines found");
-          orderStagingBean.setReturnCode("E");
-          OutboundOrderDAO.updateOrderStagingTable(orderStagingBean);
-        }
-        log4jLogger.info("Completed processing transId: " + orderStagingBean.getTransId());
       }
     }
     catch (Exception e)
     {
+      deleteOrderLogFile = false;
       log4jLogger.error(e);
+      lastOrderStagingBean.setReturnMessage("Exception thrown: " + e);
+      lastOrderStagingBean.setReturnCode("E");
+      ClxDAO.updateStagingTableForBean(lastOrderStagingBean);
       sendOrderNotifcationEmail(lastOrderStagingBean, e);
     }
-    log4jLogger.info("End CLX Outbound Order Interface.");
+    finally
+    {
+      this.setDeleteLogFile(deleteOrderLogFile);
+      log4jLogger.info("End CLX Outbound Order Interface.");
+    }
   }
 
   private static void importOrder(OrderStagingBean orderStagingBean)
@@ -72,6 +84,7 @@ public class OutboundOrder extends BaseInterface
     {
       CLXBaseImportAPI clxBaseImportAPI = new CLXBaseImportAPI();
       orderStagingBean.setGeneratedXmlMessage(OutboundOrderCreator.createOrderXml(orderStagingBean));
+      ClxDAO.insertAuditXML(orderStagingBean.getSenderIdKey(), orderStagingBean.getTransId(), null, orderStagingBean.getGeneratedXmlMessage(), "OutboundOrder");
       if (!StringUtils.isEmpty(orderStagingBean.getGeneratedXmlMessage()))
       {
         ReturnValue returnValue = clxBaseImportAPI.importDocument(orderStagingBean.getGeneratedXmlMessage());
@@ -100,7 +113,7 @@ public class OutboundOrder extends BaseInterface
     {
       if (orderStagingBean != null && orderStagingBean.getTransId() != null && orderStagingBean.getReturnCode() != null)
       {
-        OutboundOrderDAO.updateOrderStagingTable(orderStagingBean);
+        ClxDAO.updateStagingTableForBean(orderStagingBean);  //TODO Think about what to do if they are null...
       }
     }
   }
@@ -131,11 +144,11 @@ public class OutboundOrder extends BaseInterface
     }
   }
 
-  public static List<OrderLineBean> buildOrderLineBeanForDelete(OrderStagingBean orderStagingBean)
+  private static List<OrderLineBean> buildOrderLineBeanForDelete(OrderStagingBean orderStagingBean)
   {
     List<OrderLineBean> orderLineBeanList = new ArrayList<OrderLineBean>();
     String senderOrgId = orderStagingBean.getSenderId();
-    
+
     OrderLineBean orderLineBean = new OrderLineBean();
     orderLineBean.setDocId(orderStagingBean.getTransId());
     orderLineBean.setSenderOrgId(senderOrgId);

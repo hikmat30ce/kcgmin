@@ -34,7 +34,7 @@ public class ExtractFillsInterface extends BaseInterface
       this.setWercsConn((OracleConnection) ConnectionAccessBean.getConnection(DataSource.WERCS));
       List<ItemBean> itemList = new ArrayList<ItemBean>();
       ArrayList<TranslationBean> translationList = new ArrayList<TranslationBean>();
-      for (DataSource datasource: CommonUtility.getERPDataSourceList())
+      for (DataSource datasource: CommonUtility.getERPDataSourceList()) 
       {
         log4jLogger.info("Populating bulks in VCA_WERCS_EXTRACT_FILLS_QUEUE for " + datasource.getDataSourceLabel());
         populateBulks(datasource);
@@ -64,21 +64,25 @@ public class ExtractFillsInterface extends BaseInterface
         for (TranslationBean tb: translationList)
         {
           String jobId = ETLUtility.getNextJobId(this.getWercsConn());
-          IprocessBean iProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Import Aliases"), new Long("0"), new Long("1"), jobId, null, null);
+          IprocessBean iProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Import Aliases"), new Long("0"), new Long("1"), jobId, null, null, tb.getIsoLanguage());
           IaliasBean ialiasBean = new IaliasBean();
           ialiasBean.setJobId(jobId);
           ialiasBean.setProduct(tb.getProduct());
           ialiasBean.setAlias(tb.getAlias());
-          ialiasBean.setAliasName(LanguageUtility.convertDataFromWindowsEncoding(tb.getTranslation(), tb.getIsoLanguage()));
+       //   ialiasBean.setAliasName(LanguageUtility.convertDataFromWindowsEncoding(tb.getTranslation(), tb.getIsoLanguage()));
+          ialiasBean.setAliasName(tb.getTranslation());
           ialiasBean.setLanguage(tb.getIsoLanguage());
           ialiasBean.setDirection("I");
           ialiasBean.setStatus(new Long(0));
           ialiasBean.setUserInserted(this.getInterfaceName());
           ialiasBean.setDateStampInserted(new Date());
-          iProcessBean.getIAliases().add(ialiasBean);
+        //  iProcessBean.getIAliases().add(ialiasBean);
           iProcessBean.setProduct(tb.getProduct());
           updateTranslationStatus(tb, 2);
           ETLUtility.submitIprocess(iProcessBean);
+          Set<IaliasBean> iAliases = new HashSet<IaliasBean>();
+          iAliases.add(ialiasBean);
+          ETLUtility.insertIalias(getWercsConn(), iAliases);
         }
       }
     }
@@ -91,7 +95,7 @@ public class ExtractFillsInterface extends BaseInterface
       JDBCUtil.close(this.getWercsConn());
     }
   }
-
+  
   public void populateBulks(DataSource datasource)
   {
     CallableStatement cstmt = null;
@@ -99,7 +103,7 @@ public class ExtractFillsInterface extends BaseInterface
     try
     {
       conn = (OracleConnection) ConnectionAccessBean.getConnection(datasource);
-      cstmt = conn.prepareCall("{call apps.vca_wercs_pkg.upd_extract_dtl}");
+      cstmt = conn.prepareCall("{call apps.vca_wercs_pkg_6x.upd_extract_dtl}");
       log4jLogger.info("Calling vca_wercs_pkg.upd_extract_dtl()");
       cstmt.execute();
     }

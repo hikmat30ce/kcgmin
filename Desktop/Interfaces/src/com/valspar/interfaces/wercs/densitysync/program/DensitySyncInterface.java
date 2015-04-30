@@ -30,7 +30,7 @@ public class DensitySyncInterface extends BaseInterface
       checkItemsWPG(ar, wercsConn);
       if (!ar.isEmpty())
       {
-        for (DataSource datasource: CommonUtility.getERPDataSourceList())
+        for (DataSource datasource: CommonUtility.getERPDataSourceList6X()) //TODO
         {
           addLotsCNV(ar, datasource);
         }
@@ -83,7 +83,7 @@ public class DensitySyncInterface extends BaseInterface
         wb.setBusinessGroup(rs.getString(7));
         ar.add(wb);
       }
-      log4jLogger.info("We have " + ar.size() + " to process");
+      log4jLogger.info("We have " + ar.size() + " to be processed");
     }
     catch (Exception e)
     {
@@ -128,7 +128,7 @@ public class DensitySyncInterface extends BaseInterface
     {
       conn = (OracleConnection) ConnectionAccessBean.getConnection(datasource);
       log4jLogger.info("Starting to add lots cnv for " + ConnectionUtility.buildDatabaseName(conn));
-      cstmt = conn.prepareCall("{call VCA_IC_ITEM_CNV_WRAPPER(?,?,?,?,?,?)}");
+      cstmt = conn.prepareCall("{call VCA_IC_ITEM_CNV_WRAPPER_6X(?,?,?,?,?,?)}");
       for (WercsItemBean wb: wercsItemBeanList)
       {
         try

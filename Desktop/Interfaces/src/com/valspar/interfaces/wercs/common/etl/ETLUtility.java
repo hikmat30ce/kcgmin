@@ -180,12 +180,12 @@ public class ETLUtility implements Constants
     try
     {
       pst = conn.prepareStatement(sb.toString());
-      for (IaliasBean iaBean: (ArrayList<IaliasBean>) aliasBeans)
+      for (IaliasBean iaBean: aliasBeans)
       {
         pst.setString(1, iaBean.getJobId());
         pst.setString(2, iaBean.getProduct());
         pst.setString(3, iaBean.getAlias());
-        pst.setString(4, iaBean.getAliasName());
+        pst.setNString(4, iaBean.getAliasName());
         pst.setString(5, iaBean.getLanguage());
         pst.setString(6, iaBean.getDirection());
         pst.setLong(7, iaBean.getStatus());
@@ -319,13 +319,13 @@ public class ETLUtility implements Constants
         pst.setString(12, iaBean.getBTextLine());
         pst.setString(13, iaBean.getLTextLine());
         pst.setString(14, iaBean.getLanguage());
-        pst.setLong(15, iaBean.getRepDataSet());
-        pst.setLong(16, iaBean.getRepSequence());
-        pst.setLong(17, iaBean.getDeleteFlag());
+        pst.setLong(15, iaBean.getRepDataSet() == null ? 0L : iaBean.getRepDataSet());
+        pst.setLong(16, iaBean.getRepSequence() == null ? 0L : iaBean.getRepSequence());
+        pst.setLong(17, iaBean.getDeleteFlag() == null ? 0L : iaBean.getDeleteFlag());
         pst.setString(18, iaBean.getUserToApply());
         pst.setString(19, iaBean.getDirection());
-        pst.setLong(20, iaBean.getOrder());
-        pst.setLong(21, iaBean.getStatus());
+        pst.setLong(20, iaBean.getOrder() == null ? 0L : iaBean.getOrder());
+        pst.setLong(21, iaBean.getStatus() == null ? 0L : iaBean.getStatus());
         pst.setString(22, iaBean.getUserInserted());
         pst.addBatch();
       }
@@ -341,12 +341,19 @@ public class ETLUtility implements Constants
     }
   }
 
-  public static IprocessBean createIprocessBean(String userInserted, Long processGroupId, Long status, Long priority, String jobId, String product, String dateStampDelay)
+  public static IprocessBean createIprocessBean(String userInserted, Long processGroupId, Long status, Long priority, String jobId, String product, String dateStampDelay, String language)
   {
     IprocessBean iProcessBean = new IprocessBean();
     iProcessBean.setJobId(jobId);
     iProcessBean.setProcessGroupId(processGroupId);
-    iProcessBean.setLanguages("EN");
+    if(StringUtils.isEmpty(language))
+    {
+      iProcessBean.setLanguages("EN");
+    }
+    else
+    {
+      iProcessBean.setLanguages(language);
+    }
     iProcessBean.setFormat("MTR");
     iProcessBean.setSubformat("DATA");
     iProcessBean.setPlant("WERCS");
@@ -479,10 +486,12 @@ public class ETLUtility implements Constants
         sb.append("select 'PVAL',f_data_code, f_data ");
         sb.append("from t_prod_data ");
         sb.append("where F_PRODUCT = :product  ");
+        sb.append("and f_user_updated = 'ETL' ");
         sb.append("UNION ");
         sb.append("select 'PTXT', F_DATA_CODE, F_TEXT_CODE ");
         sb.append("from t_prod_text ");
         sb.append("where F_PRODUCT = :product ");
+        sb.append("and f_user_updated = 'ETL' ");
 
         pst = (OraclePreparedStatement) wercsConn.prepareStatement(sb.toString());
         pst.setStringAtName("product", pb.getFProduct());
@@ -544,30 +553,32 @@ public class ETLUtility implements Constants
       iAttributeBean.setDateStampInserted(new Date());
       beanList.add(iAttributeBean);
     }
-
-    Set textSet = pb.getTextCodes().entrySet();
-    Iterator iText = textSet.iterator();
-    while (iText.hasNext())
+    if (!pb.getTextCodes().isEmpty())
     {
-      Map.Entry entry = (Map.Entry) iText.next();
-      IattributeBean iAttributeBean = new IattributeBean();
-      iAttributeBean.setJobId(jobId);
-      iAttributeBean.setProdAliasComp("P");
-      iAttributeBean.setProduct(pb.getFProduct());
-      iAttributeBean.setUsage("PTXT");
-      iAttributeBean.setDataCode((String) entry.getKey());
-      iAttributeBean.setTextCode((String) entry.getValue());
-      iAttributeBean.setFormat("MTR");
-      iAttributeBean.setDirection("I");
-      iAttributeBean.setStatus(new Long(0));
-      iAttributeBean.setUserInserted(userInserted);
-      iAttributeBean.setDateStampInserted(new Date());
-      beanList.add(iAttributeBean);
+      Set textSet = pb.getTextCodes().entrySet();
+      Iterator iText = textSet.iterator();
+      while (iText.hasNext())
+      {
+        Map.Entry entry = (Map.Entry) iText.next();
+        IattributeBean iAttributeBean = new IattributeBean();
+        iAttributeBean.setJobId(jobId);
+        iAttributeBean.setProdAliasComp("P");
+        iAttributeBean.setProduct(pb.getFProduct());
+        iAttributeBean.setUsage("PTXT");
+        iAttributeBean.setDataCode((String) entry.getKey());
+        iAttributeBean.setTextCode((String) entry.getValue());
+        iAttributeBean.setFormat("MTR");
+        iAttributeBean.setDirection("I");
+        iAttributeBean.setStatus(new Long(0));
+        iAttributeBean.setUserInserted(userInserted);
+        iAttributeBean.setDateStampInserted(new Date());
+        beanList.add(iAttributeBean);
+      }
     }
     return beanList;
   }
 
-/*  public static void populatePublishingData(IprocessBean iProcessBean, BaseProductBean productBean)
+  /*  public static void populatePublishingData(IprocessBean iProcessBean, BaseProductBean productBean)
   {
     OracleConnection wercsConn = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.WERCS);
     OraclePreparedStatement pst = null;
@@ -653,7 +664,7 @@ public class ETLUtility implements Constants
       StringBuilder sb = new StringBuilder();
       sb.append("select distinct FORMAT, SUBFORMAT, LANGUAGE, PLANT  ");
       sb.append("from table(vca_subf_lang_pub_pkg.get_subf_lang_list(:alias, :region, :busgp)) a ");
-    /*  sb.append("WHERE   NOT EXISTS ");
+      /*  sb.append("WHERE   NOT EXISTS ");
       sb.append("                        (SELECT   * ");
       sb.append("                           FROM   i_process ");
       sb.append("                          WHERE       F_PRODUCT = :alias ");

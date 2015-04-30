@@ -86,7 +86,7 @@ public class IaliasBean
     this.aliasName = aliasName;
   }
 
-  @Column(name="F_ALIAS_NAME")  
+  @Column(name="F_ALIAS_NAME", columnDefinition="NVARCHAR2(2000) NULL")
   public String getAliasName()
   {
     return aliasName;

@@ -73,7 +73,7 @@ public class OptivaToWercsInterface extends BaseInterface
       sql.append("A.VERSION, A.FORMULA_ID, A.F_PRODUCT, A.F_PRODUCT_NAME, ");
       sql.append("L3.KEYFIELD3 AS FRMCT, B.GROUP_CODE, A.FLASHF, A.FLASHC, A.SET_CODE, A.PRIORITY, NVL(A.BYPASS_COMPARE, 0) BYPASS, A.STATUS, ");
       sql.append("L1.KEYFIELD3 AS BUSGP, L2.KEYFIELD3 AS REGION ");
-      sql.append("FROM VCA_OPTIVA_TO_WERCS A, FSFORMULA B, VCA_LOOKUPS L1, VCA_LOOKUPS L2, VCA_LOOKUPS L3 ");
+      sql.append("FROM VCA_OPTIVA_TO_WERCS_6X A, FSFORMULA B, VCA_LOOKUPS_6X L1, VCA_LOOKUPS_6X L2, VCA_LOOKUPS_6X L3 ");
       sql.append("WHERE A.FORMULA_ID = B.FORMULA_ID ");
       sql.append("AND L1.KEYFIELD1 = 'OPTIVA WERCS BUSGP XREF'  ");
       sql.append("AND L1.KEYFIELD2 = B.GROUP_CODE ");
@@ -462,7 +462,7 @@ public class OptivaToWercsInterface extends BaseInterface
     {
       for (ProductBean pb: productList)
       {
-        IprocessBean iProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Product Import"), new Long(0), new Long(pb.getPriority()), ETLUtility.getNextJobId(getWercsConn()), pb.getFProduct(), "0");
+        IprocessBean iProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Product Import"), new Long(0), new Long(pb.getPriority()), ETLUtility.getNextJobId(getWercsConn()), pb.getFProduct(), "0", null);
         ArrayList<IprocessBean> translationList = new ArrayList<IprocessBean>();
         log4jLogger.info(iProcessBean.getJobId() + " created for product: " + pb.getFProduct());
         if (pb.isSameProduct())
@@ -474,7 +474,7 @@ public class OptivaToWercsInterface extends BaseInterface
             for (String language: pb.getDescriptionLanguages())
             {
               String jobId = ETLUtility.getNextJobId(getWercsConn());
-              IprocessBean importAliasProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Import Aliases"), new Long("0"), new Long("1"), jobId, null, null);
+              IprocessBean importAliasProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Import Aliases"), new Long("0"), new Long("1"), jobId, pb.getFProduct(), null, null);
               IaliasBean ialiasBean = new IaliasBean();
               ialiasBean.setJobId(jobId);
               ialiasBean.setProduct(pb.getFProduct());
@@ -500,7 +500,7 @@ public class OptivaToWercsInterface extends BaseInterface
           for (String language: pb.getDescriptionLanguages())
           {
             String jobId = ETLUtility.getNextJobId(getWercsConn());
-            IprocessBean importAliasProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Import Aliases"), new Long("0"), new Long("1"), jobId, null, null);
+            IprocessBean importAliasProcessBean = ETLUtility.createIprocessBean(this.getInterfaceName(), ETLUtility.getProcessGroupId(getWercsConn(), "Import Aliases"), new Long("0"), new Long("1"), jobId, pb.getFProduct(), null, null);
             IaliasBean ialiasBean = new IaliasBean();
             ialiasBean.setJobId(jobId);
             ialiasBean.setProduct(pb.getFProduct());
@@ -571,7 +571,7 @@ public class OptivaToWercsInterface extends BaseInterface
       }
 
       StringBuilder sql = new StringBuilder();
-      sql.append("UPDATE VCA_OPTIVA_TO_WERCS SET STATUS = ");
+      sql.append("UPDATE VCA_OPTIVA_TO_WERCS_6X SET STATUS = ");
       sql.append(status);
 
       if (status == 1)

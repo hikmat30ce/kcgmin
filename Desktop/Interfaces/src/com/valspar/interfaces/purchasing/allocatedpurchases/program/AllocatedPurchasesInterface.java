@@ -28,15 +28,15 @@ public class AllocatedPurchasesInterface extends BaseInterface
       List<BaseBuilderThread> workers = new ArrayList<BaseBuilderThread>();
       for (DataSource datasource: CommonUtility.getERPDataSourceList())
       {
-        workers.add(new PurchasesBuilderThread(getInterfaceInfo(), datasource));
+        workers.add(new PurchasesBuilderThread(getInterfaceInfoBean(), datasource));
       }
       for (DataSource datasource: CommonUtility.getERPDataSourceList())
       {
-        workers.add(new BatchesBuilderThread(getInterfaceInfo(), datasource));
+        workers.add(new BatchesBuilderThread(getInterfaceInfoBean(), datasource));
       }
       for (DataSource datasource: CommonUtility.getERPDataSourceList())
       {
-        workers.add(new SalesBuilderThread(getInterfaceInfo(), datasource));
+        workers.add(new SalesBuilderThread(getInterfaceInfoBean(), datasource));
       }
     /*  workers.add(new PurchasesBuilderThread(getInterfaceInfo(), DataSource.NORTHAMERICAN));
       workers.add(new PurchasesBuilderThread(getInterfaceInfo(), DataSource.EMEAI));

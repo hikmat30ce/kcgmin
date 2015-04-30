@@ -13,6 +13,13 @@
     <servlet-class>com.valspar.interfaces.common.servlets.StartUpServlet</servlet-class>
     <load-on-startup>100</load-on-startup>  
   </servlet>
+  
+    <servlet>
+    <servlet-name>WorkdayImageServlet</servlet-name>
+    <servlet-class>com.valspar.interfaces.hr.workdayadsync.servlets.WorkdayImageServlet</servlet-class>
+    <load-on-startup>101</load-on-startup>  
+  </servlet>
+  
   <servlet>
     <servlet-name>jersey</servlet-name>
     <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
@@ -27,6 +34,12 @@
   <servlet-mapping>
     <servlet-name>StartUpServlet</servlet-name>
     <url-pattern>/StartUpServlet</url-pattern>
+  </servlet-mapping>
+  
+  
+  <servlet-mapping>
+    <servlet-name>WorkdayImageServlet</servlet-name>
+    <url-pattern>/WorkdayImageServlet</url-pattern>
   </servlet-mapping>
   
     <servlet-mapping>

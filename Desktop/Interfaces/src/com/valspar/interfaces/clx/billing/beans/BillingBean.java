@@ -4,10 +4,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.*;
 
-
-
-
-
 @Entity
 @Table(name = "VALSPAR.CLX_FREIGHT_INTERFACE")
 public class BillingBean

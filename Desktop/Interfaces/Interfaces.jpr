@@ -270,7 +270,7 @@
       <hash n="runConfigurationDefinitions">
          <hash n="Start Interfaces">
             <value n="custom" v="false"/>
-            <value n="javaOptions" v="-Xms512M -Xmx1024M -XX:MaxPermSize=512m -Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Dweblogic.security.SSL.ignoreHostnameVerification=true"/>
+            <value n="javaOptions" v="-Dfile.encoding=UTF-8 -Duser.language=en -Duser.country=US -Dweblogic.security.SSL.ignoreHostnameVerification=true"/>
             <value n="name" v="Start Interfaces"/>
             <hash n="oracle.jdevimpl.runner.debug.DebugConfiguration">
                <value n="remoteParameter:jpdaListen:localAddress" v=""/>
@@ -356,7 +356,7 @@
             <value n="isJDK" v="false"/>
          </hash>
          <hash>
-            <value n="id" v="Quartz 2.1.6"/>
+            <value n="id" v="Quartz 2.2.1"/>
             <value n="isJDK" v="false"/>
          </hash>
          <hash>
@@ -536,18 +536,9 @@
             </hash>
             <hash>
                <list n="classPath">
-                  <url path="public_html/WEB-INF/lib/quartz-all-2.1.6.jar" jar-entry=""/>
-                  <url path="public_html/WEB-INF/lib/slf4j-api-1.6.6.jar" jar-entry=""/>
-                  <url path="public_html/WEB-INF/lib/slf4j-simple-1.6.6.jar" jar-entry=""/>
-               </list>
-               <value n="description" v="Quartz 2.1.6"/>
-               <value n="id" v="Quartz 2.1.6"/>
-            </hash>
-            <hash>
-               <list n="classPath">
+                  <url path="public_html/WEB-INF/lib/force-wsc-33.0.3.jar" jar-entry=""/>
                   <url path="public_html/WEB-INF/lib/ST-4.0.7.jar" jar-entry=""/>
                   <url path="public_html/WEB-INF/lib/sfdc-enterprise-ws.jar" jar-entry=""/>
-                  <url path="public_html/WEB-INF/lib/force-wsc-30.0.0.jar" jar-entry=""/>
                </list>
                <value n="description" v="SFDC"/>
                <value n="id" v="SFDC"/>
@@ -691,6 +682,7 @@
                   <url path="public_html/WEB-INF/lib/bcprov-jdk15on-151.jar" jar-entry=""/>
                   <url path="public_html/WEB-INF/lib/jasypt-1.9.2.jar" jar-entry=""/>
                   <url path="public_html/WEB-INF/lib/WorkdayReader.jar" jar-entry=""/>
+                  <url path="public_html/WEB-INF/lib/bcpg-jdk15on-151.jar" jar-entry=""/>
                </list>
                <value n="description" v="Workday Reader"/>
                <value n="id" v="Workday Reader"/>
@@ -701,6 +693,15 @@
                </list>
                <value n="description" v="Workday Payroll SOAP Proxy"/>
                <value n="id" v="Workday Payroll SOAP Proxy"/>
+            </hash>
+            <hash>
+               <list n="classPath">
+                  <url path="public_html/WEB-INF/lib/slf4j-api-1.6.6.jar" jar-entry=""/>
+                  <url path="public_html/WEB-INF/lib/slf4j-simple-1.6.6.jar" jar-entry=""/>
+                  <url path="public_html/WEB-INF/lib/quartz-2.2.1.jar" jar-entry=""/>
+               </list>
+               <value n="description" v="Quartz 2.2.1"/>
+               <value n="id" v="Quartz 2.2.1"/>
             </hash>
          </list>
       </hash>
@@ -774,7 +775,7 @@
             <value n="isJDK" v="false"/>
          </hash>
          <hash>
-            <value n="id" v="Quartz 2.1.6"/>
+            <value n="id" v="Quartz 2.2.1"/>
             <value n="isJDK" v="false"/>
          </hash>
          <hash>

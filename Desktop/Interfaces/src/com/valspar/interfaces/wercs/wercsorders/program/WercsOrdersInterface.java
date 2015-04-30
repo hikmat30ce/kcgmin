@@ -14,6 +14,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.*;
 import oracle.jdbc.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 
@@ -49,7 +50,7 @@ public class WercsOrdersInterface extends BaseInterface
       setProcessFlags();
 
       log4jLogger.info("Starting populateTable");
-      populateTable(); 
+      populateTable();
       log4jLogger.info("Ending populateTable");
 
       regulatedList = loadOrders();
@@ -64,9 +65,9 @@ public class WercsOrdersInterface extends BaseInterface
         log4jLogger.info("Starting to process the msdsList for " + dbName);
         insertIntoTCustomers(iOrdersList);
         log4jLogger.info("insertIntoTCustomers() Completed for " + dbName);
-        insertIntoTCustomerOrders(iOrdersList);
+        insertIntoIOrders(iOrdersList);
         log4jLogger.info("insertIntoTCustomerOrders() Completed for " + dbName);
-        updProcessFlags("MSDS_PROCESSED"); 
+        updProcessFlags("MSDS_PROCESSED");
       }
 
       if (!regulatedList.isEmpty())
@@ -76,9 +77,9 @@ public class WercsOrdersInterface extends BaseInterface
         log4jLogger.info("insertIntoVaTscaDsl() Completed for " + dbName);
         insertIntoVaStateRegs(regulatedList, regulatedStatesList);
         log4jLogger.info("insertIntoVaStateRegs() Completed for " + dbName);
-    //    updProcessFlags("REGULATED_PROCESSED"); //TODO  JW remove comments// Russ K - New 03/07/2006 
+        //    updProcessFlags("REGULATED_PROCESSED"); //TODO  JW remove comments// Russ K - New 03/07/2006
       }
-     //TODO  JW the 3 comment out lines need to put back after tests  //TODO  JW remove comments
+      //TODO  JW the 3 comment out lines need to put back after tests  //TODO  JW remove comments
       /*
       deleteProcessedRows(); // Russ K - New method to delete rows that were processed
       truncateTable("VCA_WERCS_SO_TXNS"); // Russ K - New, truncates table if empty
@@ -121,8 +122,8 @@ public class WercsOrdersInterface extends BaseInterface
     CallableStatement cstmt = null;
     try
     {
-      cstmt = getNorthAmericanConn().prepareCall("{call apps.vca_wercs_pkg.load_vca_wercs_orders_wk(?)}");
-      log4jLogger.info("Calling vca_wercs_pkg.load_vca_wercs_orders_wk()"); // REMOVE
+      cstmt = getNorthAmericanConn().prepareCall("{call apps.vca_wercs_pkg_6x.load_vca_wercs_orders_wk(?)}");
+      log4jLogger.info("Calling vca_wercs_pkg_6x.load_vca_wercs_orders_wk()"); // REMOVE
       cstmt.registerOutParameter(1, Types.VARCHAR);
       cstmt.execute();
       String error = cstmt.getString(1);
@@ -193,7 +194,7 @@ public class WercsOrdersInterface extends BaseInterface
     ArrayList<IorderBean> iOrdersList = new ArrayList<IorderBean>();
     OracleStatement stmt = null;
     ResultSet rs = null;
-    try 
+    try
     {
       StringBuilder sb = new StringBuilder();
       sb.append("SELECT from_whse, ");
@@ -205,14 +206,17 @@ public class WercsOrdersInterface extends BaseInterface
       sb.append("       b.ADDR1 as cust_name, ");
       sb.append("       b.addr3, ");
       sb.append("       b.addr4, ");
-      sb.append("       b.CITY, ");
-      sb.append("       b.STATE, ");
-      sb.append("       b.ZIP, ");
-      sb.append("       b.COUNTRY, ");
-      sb.append("       b.EMAIL, ");
-      sb.append("       INV_TYPE ");
+      sb.append("       b.city, ");
+      sb.append("       b.state, ");
+      sb.append("       b.zip, ");
+      sb.append("       b.country, ");
+      sb.append("       b.email, ");
+      sb.append("       inv_type, ");
+      sb.append("       a.ship_address ");
       sb.append("  FROM valspar.vca_wercs_orders_wk a, VCA_WERCS_MSDS_ADDRESSES_VIEW b ");
       sb.append("  where a.shipcust_id = b.cust_id (+) ");
+      
+      String printer = getPrinter();
 
       log4jLogger.info("STARTED SELECTING SALES ORDERS FROM VCA_WERCS_MSDS_ORDERS_VIEW in " + ConnectionUtility.buildDatabaseName(getNorthAmericanConn()));
       stmt = (OracleStatement) getNorthAmericanConn().createStatement();
@@ -223,12 +227,14 @@ public class WercsOrdersInterface extends BaseInterface
       while (rs.next())
       {
         IorderBean iob = new IorderBean();
-        iob.setPlant(rs.getString(1));
+        // iob.setPlant(rs.getString(1));
+        iob.setPlant("WERCS");
         iob.setCustomerId(rs.getString(2));
         iob.setAddressType("00");
         iob.setCustomerType("C");
         iob.setProduct(rs.getString(3));
-        iob.setFormat(Constants.VAL_FORMAT);
+        ///iob.setFormat(Constants.VAL_FORMAT);
+        iob.setFormat("MTR");
         iob.setSubformat(rs.getString(4));
         iob.setCustOrder(rs.getString(5));
         iob.setQuantity(rs.getLong(6));
@@ -238,14 +244,27 @@ public class WercsOrdersInterface extends BaseInterface
         iob.setAddress2(rs.getString(9));
         iob.setCity(rs.getString(10));
         iob.setState(rs.getString(11));
-        iob.setZipCode(rs.getString(12));        
+        iob.setZipCode(rs.getString(12));
         iob.setInventoryType(rs.getString(15));
+        iob.setCustom1(rs.getString(16));
+        iob.setCont(Constants.ZERO);
         iob.setCustom2(ConnectionUtility.buildDatabaseName(getNorthAmericanConn()));
         iob.setUom(Constants.LB);
         iob.setAttentionLine(Constants.EMPTY_STRING);
         iob.setNumCopies(new Long(1));
         iob.setLanguage(Constants.EN_LANG);
         iob.setCountryCode(findWercsCountryCodeFromName(rs.getString(13)));
+        iob.setStatus(new Long(0));
+        String email = rs.getString(14);
+        if(StringUtils.isEmpty(email))
+        {
+          iob.setDestination("PRINTER:" + printer);   //"PRINTER:\\\\minneapolis30\\min9naps2"); //TODO  need change to PROD string
+        }
+        else
+        {
+          iob.setDestination("EMAIL:" + email);
+        }
+
         iOrdersList.add(iob);
         if (iob.getCountryCode().equalsIgnoreCase("CAN") && iob.getSubformat().equalsIgnoreCase("CAN") && (iob.getState().equalsIgnoreCase("QC") || iob.getState().equalsIgnoreCase("QUEBEC")))
         {
@@ -296,7 +315,7 @@ public class WercsOrdersInterface extends BaseInterface
       stmtB = getNorthAmericanConn().createStatement();
       stmtB.executeUpdate(sqlb.toString());
 
-      cstmt = getNorthAmericanConn().prepareCall("{call VCA_WERCS_PKG.FLAG_VCA_WERCS_SO_TXNS(?,?,?)}");
+      cstmt = getNorthAmericanConn().prepareCall("{call VCA_WERCS_PKG_6X.FLAG_VCA_WERCS_SO_TXNS(?,?,?)}");
       cstmt.registerOutParameter(1, Types.VARCHAR);
       cstmt.registerOutParameter(2, Types.VARCHAR);
       cstmt.registerOutParameter(3, Types.NUMERIC);
@@ -451,7 +470,7 @@ public class WercsOrdersInterface extends BaseInterface
 
       insertIntoTCustomersPstmt = getWercsConn().prepareStatement(sb.toString());
 
-      for (IorderBean iob :ar)
+      for (IorderBean iob: ar)
       {
         lastCustomerId = iob.getCustomerId();
         if (iob.getInventoryType().equalsIgnoreCase(Constants.FG))
@@ -477,17 +496,17 @@ public class WercsOrdersInterface extends BaseInterface
     }
   }
 
-  private void insertIntoTCustomerOrders(List<IorderBean> list)
+  private void insertIntoIOrders(List<IorderBean> list)
   {
     Session session = HibernateUtil.getHibernateSessionAndBeginTransaction(DataSource.WERCS);
     try
     {
       for (IorderBean iOrderBean: (list))
-      {     
-        iOrderBean.setDateStampInserted(new Date());//TODO, need to only add based on last send date restriction, need to figure this out yet
+      {
+        iOrderBean.setDateStampInserted(new Date()); //TODO, need to only add based on last send date restriction, need to figure this out yet
         //TODO see INSERT_INTO_T_CUST_ORDERS_PROC
-        session.save(iOrderBean);   
-      }   
+        session.save(iOrderBean);
+      }
     }
     catch (Exception e)
     {
@@ -495,7 +514,7 @@ public class WercsOrdersInterface extends BaseInterface
     }
     finally
     {
-      HibernateUtil.closeHibernateSessionAndCommitTransaction(session);    
+      HibernateUtil.closeHibernateSessionAndCommitTransaction(session);
     }
   }
 
@@ -506,7 +525,7 @@ public class WercsOrdersInterface extends BaseInterface
     {
       insertIntoVaTscaDslPstmt = getWercsConn().prepareStatement("INSERT INTO VA_TSCA_DSL VALUES (VA_TSCA_DSL_SEQ.NEXTVAL, ?,?,?,?,?,?, SYSDATE-1, 0, 0, ?)");
       Iterator i = ar.iterator();
-      for (OrderBean orderBean : ar)
+      for (OrderBean orderBean: ar)
       {
         insertIntoVaTscaDslPstmt.setString(1, orderBean.getPlant());
         insertIntoVaTscaDslPstmt.setString(2, orderBean.getAlias());
@@ -541,7 +560,7 @@ public class WercsOrdersInterface extends BaseInterface
     try
     {
       insertIntoVaStateRegsPstmt = getWercsConn().prepareStatement("INSERT INTO VA_STATE_REGS VALUES (VA_STATE_REGS_SEQ.NEXTVAL,?,?,?,?,?,?, SYSDATE-1, 0, ?, 0)");
-      for(OrderBean orderBean: ar)
+      for (OrderBean orderBean: ar)
       {
         insertIntoVaStateRegsPstmt.setString(1, orderBean.getPlant());
         insertIntoVaStateRegsPstmt.setString(2, orderBean.getAlias());
@@ -617,19 +636,25 @@ public class WercsOrdersInterface extends BaseInterface
       JDBCUtil.close(stmt2);
     }
   }
-  
+
   public String findWercsCountryCodeFrom11iCode(String countryCode11i)
   {
     StringBuilder sb = new StringBuilder();
     sb.append("select keyfield3 from vca_lookups where application = 'Valspar Custom Application' ");
-    sb.append("and keyfield1 = 'COUNTRY_CODE' and keyfield2 = ? "); 
+    sb.append("and keyfield1 = 'COUNTRY_CODE' and keyfield2 = ? ");
     return ValsparLookUps.queryForSingleValueLeaveConnectionOpen(getWercsConn(), sb.toString(), countryCode11i);
   }
-  
+
   public String findWercsCountryCodeFromName(String countryName)
   {
     String sql = "select f_country_code from t_countries c where upper(f_country_name) = upper(?)";
     return ValsparLookUps.queryForSingleValueLeaveConnectionOpen(getWercsConn(), sql, countryName);
+  }
+
+  private String getPrinter()
+  {
+    String sql = "select keyfield2 from vca_lookups where application = 'Valspar Custom Application' and keyfield1 = 'ORDER_PRINTER'";
+    return ValsparLookUps.queryForSingleValueLeaveConnectionOpen(getWercsConn(), sql);
   }
 
   public void setNorthAmericanConn(OracleConnection northAmericanConn)

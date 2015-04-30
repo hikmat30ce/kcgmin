@@ -62,15 +62,22 @@ public class SubmitPayrollInput extends BaseInterface
   {
     try
     {
-      log4jLogger.info("SubmitPayrollInput.startWatchingDirectory() started...");
+      log4jLogger.info("SubmitPayrollInput.execute() started...");
       File[] files = new File(PropertiesServlet.getProperty("workday.payrollinputdirectory")).listFiles();
 
-      for (File file: files)
+      if (files != null && files.length == 1)
       {
-        if (file.isFile())
+        this.setDeleteLogFile(true);
+      }
+      else
+      {
+        for (File file: files)
         {
-          log4jLogger.info("Calling process payroll inputs for " + file.getCanonicalPath());
-          processPayrollInputs(file);
+          if (file.isFile())
+          {
+            log4jLogger.info("Calling process payroll inputs for " + file.getCanonicalPath());
+            processPayrollInputs(file);
+          }
         }
       }
     }
@@ -171,7 +178,7 @@ public class SubmitPayrollInput extends BaseInterface
       clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
       Client client = Client.create(clientConfig);
       client.addFilter(new HTTPBasicAuthFilter(PropertiesServlet.getProperty("workday.username"), WorkdayReader.readProperty(PropertiesServlet.getProperty("workday.apikey"))));
-
+      
       WebResource webResource = client.resource("https://" + PropertiesServlet.getProperty("workday.server") + "/ccx/service/customreport2/" + PropertiesServlet.getProperty("workday.tenant") + "/integrationOwner/Int_Current_Pay_Period?format=json");
       webResource = webResource.queryParam("referenceID", referenceID);
 

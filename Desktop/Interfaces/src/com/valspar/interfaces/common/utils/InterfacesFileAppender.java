@@ -27,14 +27,13 @@ public class InterfacesFileAppender extends DailyRollingFileAppender
 
     if (interfaceInfo != null)
     {
-      File f = new File(interfaceInfo.getLogFileLocation());
-      f.getParentFile().mkdirs();
+      interfaceInfo.getLogFile().getParentFile().mkdirs();
 
       FileOutputStream fos = null;
       PrintWriter pw = null;
       try
       {
-        fos = new FileOutputStream(f, true);
+        fos = new FileOutputStream(interfaceInfo.getLogFile(), true);
         pw = new PrintWriter(fos, true);
 
         String line = layout.format(loggingEvent);

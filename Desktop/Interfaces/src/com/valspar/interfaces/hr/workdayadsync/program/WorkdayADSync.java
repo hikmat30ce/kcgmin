@@ -15,6 +15,7 @@ import com.valspar.interfaces.common.servlets.PropertiesServlet;
 import com.valspar.interfaces.common.utils.*;
 import com.valspar.interfaces.hr.workdayadsync.beans.ADUserBean;
 import com.valspar.interfaces.hr.workdayadsync.beans.Employee;
+import com.valspar.interfaces.hr.workdayadsync.servlets.WorkdayImageServlet;
 import com.valspar.workday.reader.WorkdayReader;
 import java.awt.image.*;
 import java.io.*;
@@ -342,7 +343,11 @@ public class WorkdayADSync extends BaseInterface
         }
         else
         {          
-          getNoncompliantImageList().add("Employee image is not in jpg format for user " + employee.getUserName().toUpperCase() + "-" + employee.getEmployeeID() + " file name is " + employee.getImageFileName());
+          StringBuilder text = new StringBuilder();
+          text.append("Employee image is not in jpg format for user " + employee.getUserName().toUpperCase() + "-" + employee.getEmployeeID() + " file name is " + employee.getImageFileName());
+          text.append(" <a href ="+PropertiesServlet.getProperty("webserver")+"/interfaces/WorkdayImageServlet?employeeID="+employee.getEmployeeID()+">View Photo</a>");
+          
+          getNoncompliantImageList().add(text.toString());
           getHumanResourcesAPI().writeImageEmployeeImageToPath(employee.getEmployeeID(), NON_COMPLIANT_IMAGE_DIRECTORY, employeeImage);
         }
       }
@@ -386,11 +391,15 @@ public class WorkdayADSync extends BaseInterface
         String businessTitle = employee.getBusinessTitle();
         String manager = null;
         
-        ADUserBean managerADUserBean = getAdUserBeanMap().get(employee.getManagerUserName().toUpperCase());
-        if (managerADUserBean != null)
+        if (employee.getManagerUserName() != null)
         {
-          manager = managerADUserBean.getDn();
+          ADUserBean managerADUserBean = getAdUserBeanMap().get(employee.getManagerUserName().toUpperCase());
+          if (managerADUserBean != null)
+          {
+            manager = managerADUserBean.getDn();
+          }
         }
+ 
         String employeeID = employee.getEmployeeID();
         
         adUserBean.setEmployeeId(employeeID);
@@ -529,6 +538,7 @@ public class WorkdayADSync extends BaseInterface
       if (bufferedImage.getHeight() != 200 || bufferedImage.getWidth() != 200)
       {
         String imageStatement = employee.getUserName().toUpperCase() + "-" + employee.getEmployeeID() + " (Height " + bufferedImage.getHeight() + " Width " + bufferedImage.getWidth()+") file name is " + employee.getImageFileName();
+        imageStatement+= " <a href ="+PropertiesServlet.getProperty("webserver")+"/interfaces/WorkdayImageServlet?employeeID="+employee.getEmployeeID()+">View Photo</a>";
         getNoncompliantImageList().add(imageStatement);
         getHumanResourcesAPI().writeImageEmployeeImageToPath(employee.getEmployeeID(), NON_COMPLIANT_IMAGE_DIRECTORY, employeeImageBytes);
       }

@@ -24,7 +24,7 @@ public class WercsUtility implements Constants
 
   public static ArrayList<String> getDescriptionLanguages(String region)
   {
-    OracleConnection wercsConn = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.REGULATORY);
+    OracleConnection wercsConn = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.WERCS);
     ArrayList<String> returnValue = new ArrayList<String>();
     StringBuilder sql = new StringBuilder();
     Statement stmt = null;
@@ -65,7 +65,7 @@ public class WercsUtility implements Constants
     try
     {
       sql.append("SELECT DISTINCT C.WERCS_DATA_CODE, DECODE(B.PVALUE, 'Y', 'Y', 'N', 'N','0 0','00','YES','YES', ROUND(B.PVALUE, C.PRECISION)) ");
-      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING C ");
+      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING_6X C ");
       sql.append("WHERE F.FORMULA_ID = B.FORMULA_ID ");
       sql.append("AND   NVL (FSI.GET_CLASS_XREF (F.CLASS), F.CLASS) = C.FORMULA_CLASS ");
       sql.append("AND   B.PARAM_CODE = C.OPTIVA_DATA_CODE ");
@@ -74,7 +74,7 @@ public class WercsUtility implements Constants
       sql.append(pb.getFormulaId());
       sql.append(" union ");
       sql.append("SELECT DISTINCT C.WERCS_DATA_CODE, L.KEYFIELD4 ");
-      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING C, VCA_LOOKUPS L  ");
+      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING_6X C, VCA_LOOKUPS_6X L  ");
       sql.append("WHERE F.FORMULA_ID = B.FORMULA_ID  ");
       sql.append("AND   NVL (FSI.GET_CLASS_XREF (F.CLASS), F.CLASS) = NVL(C.FORMULA_CLASS,NVL (FSI.GET_CLASS_XREF (F.CLASS), F.CLASS))  ");
       sql.append("AND   B.PARAM_CODE = C.OPTIVA_DATA_CODE  ");
@@ -137,7 +137,7 @@ public class WercsUtility implements Constants
     try
     {
       sql.append("SELECT DISTINCT C.WERCS_DATA_CODE, DECODE(B.PVALUE, 'Y', 'Y', 'N', 'N','0 0','00', ROUND(B.PVALUE, C.PRECISION)) ");
-      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING C ");
+      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING_6X C ");
       sql.append("WHERE F.FORMULA_ID = B.FORMULA_ID ");
       sql.append("AND   NVL (FSI.GET_CLASS_XREF (F.CLASS), F.CLASS) = C.FORMULA_CLASS ");
       sql.append("AND   B.PARAM_CODE = C.OPTIVA_DATA_CODE ");
@@ -146,7 +146,7 @@ public class WercsUtility implements Constants
       sql.append(pb.getFormulaId());
       sql.append(" union ");
       sql.append("SELECT DISTINCT C.WERCS_DATA_CODE, L.KEYFIELD4 ");
-      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING C, VCA_LOOKUPS L  ");
+      sql.append("FROM FSFORMULA F, FSFORMULATECHPARAM B, VCA_OPTIVA_WERCS_MAPPING_6X C, VCA_LOOKUPS_6X L  ");
       sql.append("WHERE F.FORMULA_ID = B.FORMULA_ID  ");
       sql.append("AND   NVL (FSI.GET_CLASS_XREF (F.CLASS), F.CLASS) = NVL(C.FORMULA_CLASS,NVL (FSI.GET_CLASS_XREF (F.CLASS), F.CLASS))  ");
       sql.append("AND   B.PARAM_CODE = C.OPTIVA_DATA_CODE  ");

@@ -64,10 +64,9 @@ public class TransportationInterface extends BaseInterface
       sb.append("AND   a.container IS NULL ");
       sb.append("AND   a.date_processed IS NULL ");
       sb.append("AND   a.comments IS NULL ");
-     // sb.append("and id= 3682522 ");
       sb.append("UNION ");
       // Second get all of the first time single level products (with container) from the sales order
-      sb.append("SELECT distinct  id, product, product, container ");
+      sb.append("SELECT distinct  id, product, product, container "); 
       sb.append("FROM vca_transportation_queue ");
       sb.append("WHERE container IS NOT NULL ");
       sb.append("AND   date_processed IS NULL ");
@@ -102,7 +101,6 @@ public class TransportationInterface extends BaseInterface
       sb.append("AND   a.container IS NULL ");
       sb.append("AND   a.date_processed IS NULL ");
       sb.append("AND   a.comments IS NULL ");
-
 
       buildProductBeansStmt = (OracleStatement) this.getWercsConn().createStatement();
       log4jLogger.info("Selecting products to be processed...");
@@ -409,7 +407,7 @@ public class TransportationInterface extends BaseInterface
 
       if (unNumberExist)
       {
-        populateHazLabel(pb, false, false);
+        populateVaDotsMstData(pb, false, false);
         cstmt.setString(1, itemBean.getItemId());
         cstmt.setString(2, pb.getShipMethod());
         cstmt.setString(3, pb.getUnNumber());
@@ -441,67 +439,21 @@ public class TransportationInterface extends BaseInterface
           }
         }
 
-        if (!itemBean.isEMEAI() && pb.getShipMethod().equalsIgnoreCase("LAND"))
+        if (pb.getData(Constants.MP1) != null && pb.getData(Constants.MP2) != null)
         {
-          cstmt.setString(10, "");
+          cstmt.setString(10, pb.getData(Constants.MP1) + ", " + pb.getData(Constants.MP2));
         }
-        else if ("UN3082".equalsIgnoreCase(pb.getEuUnNumber()) && (itemBean.isEMEAI() || itemBean.isASIAPAC()))
+        else if(pb.getData(Constants.MP1) != null)
         {
-          if (pb.getData(Constants.TRMING) != null && (pb.getData(Constants.TRMING).equalsIgnoreCase(pb.getEuHazIngr1()) || pb.getData(Constants.TRMING).equalsIgnoreCase(pb.getEuHazIngr2()) || pb.getData(Constants.TRMING).equalsIgnoreCase(pb.getHazIngr3())))
-          {
-            if (pb.getData(Constants.TRMING2) == null || (pb.getData(Constants.TRMING2) != null && (pb.getData(Constants.TRMING2).equalsIgnoreCase(pb.getEuHazIngr1()) || pb.getData(Constants.TRMING2).equalsIgnoreCase(pb.getEuHazIngr2()) || pb.getData(Constants.TRMING2).equalsIgnoreCase(pb.getHazIngr3()))))
-            {
-              cstmt.setString(10, "");
-            }
-            else
-            {
-              cstmt.setString(10, pb.getData(Constants.TRMING2));
-            }
-          }
-          else
-          {
-            if (pb.getData(Constants.TRMING2) != null)
-            {
-              cstmt.setString(10, pb.getData(Constants.TRMING) + ", " + pb.getData(Constants.TRMING2));
-            }
-            else
-            {
-              cstmt.setString(10, pb.getData(Constants.TRMING));
-            }
-          }
+          cstmt.setString(10, pb.getData(Constants.MP1));         
         }
-        else if ("UN3082".equalsIgnoreCase(pb.getUnNumber()) && !itemBean.isEMEAI() && !itemBean.isASIAPAC())
+        else if(pb.getData(Constants.MP2) != null)
         {
-          if (pb.getData(Constants.TRMING) != null && (pb.getData(Constants.TRMING).equalsIgnoreCase(pb.getHazIngr1()) || pb.getData(Constants.TRMING).equalsIgnoreCase(pb.getHazIngr2()) || pb.getData(Constants.TRMING).equalsIgnoreCase(pb.getHazIngr3())))
-          {
-            if (pb.getData(Constants.TRMING2) == null || (pb.getData(Constants.TRMING2) != null && (pb.getData(Constants.TRMING2).equalsIgnoreCase(pb.getHazIngr1()) || pb.getData(Constants.TRMING2).equalsIgnoreCase(pb.getHazIngr2()) || pb.getData(Constants.TRMING2).equalsIgnoreCase(pb.getHazIngr3()))))
-            {
-              cstmt.setString(10, "");
-            }
-            else
-            {
-              cstmt.setString(10, pb.getData(Constants.TRMING2));
-            }
-          }
-          else
-          {
-            if (pb.getData(Constants.TRMING2) != null)
-            {
-              cstmt.setString(10, pb.getData(Constants.TRMING) + ", " + pb.getData(Constants.TRMING2));
-            }
-            else
-            {
-              cstmt.setString(10, pb.getData(Constants.TRMING));
-            }
-          }
-        }
-        else if (pb.getData(Constants.TRMING2) != null)
-        {
-          cstmt.setString(10, pb.getData(Constants.TRMING) + ", " + pb.getData(Constants.TRMING2));
+          cstmt.setString(10, pb.getData(Constants.MP2));         
         }
         else
         {
-          cstmt.setString(10, pb.getData(Constants.TRMING));
+          cstmt.setString(10, "");         
         }
         
         if (itemBean.isEMEAI() || itemBean.isASIAPAC())
@@ -537,10 +489,11 @@ public class TransportationInterface extends BaseInterface
           cstmt.setString(18, pb.getData(Constants.FPF));
         cstmt.setString(19, pb.getAdrNumber());
         cstmt.setString(20, pb.getMfagNo());
-        if(pb.getShipMethod().equalsIgnoreCase("WATR"))
+        cstmt.setString(21, pb.getEmsNo());
+       /* if(pb.getShipMethod().equalsIgnoreCase("WATR"))
           cstmt.setString(21, pb.getData(Constants.EMS));
         else
-          cstmt.setString(21, " ");
+          cstmt.setString(21, " ");*/
         cstmt.setString(22, pb.getData(Constants.SEC));
         cstmt.setString(23, pb.getImdgPage());
         cstmt.setString(24, pb.getTransCount());
@@ -551,7 +504,14 @@ public class TransportationInterface extends BaseInterface
         cstmt.setString(29, pb.getZLabel());
         cstmt.setString(30, itemBean.getInventoryItemId());
         cstmt.setString(31, pb.getShippingName());
-        cstmt.setString(32, pb.getHazardClass());
+        if (itemBean.isNA())
+        {
+          cstmt.setString(32, pb.getHazardClass());
+        }
+        else
+        {
+          cstmt.setString(32, pb.getEuHazardClass());        
+        }
         cstmt.setString(33, pb.getSubsidaryRisk());
         cstmt.setString(34, pb.getErgCode());
         cstmt.setString(35, pb.getHazLabel1());
@@ -569,10 +529,11 @@ public class TransportationInterface extends BaseInterface
         cstmt.setString(47, pb.getData(Constants.ENVHAZB));
         cstmt.setString(48, pb.getContainer());
         cstmt.setString(49, pb.getData(Constants.VOCPCT));
-        if(pb.getShipMethod().equalsIgnoreCase("LAND") || pb.getShipMethod().equalsIgnoreCase("WATR"))
+        cstmt.setString(50, pb.getTunnelCode());
+      /*  if(pb.getShipMethod().equalsIgnoreCase("LAND") || pb.getShipMethod().equalsIgnoreCase("WATR"))
           cstmt.setString(50, pb.getData(Constants.TRCA));
         else
-          cstmt.setString(50, " ");
+          cstmt.setString(50, " ");*/
         cstmt.setString(51, pb.getData(Constants.MIR));
         cstmt.setString(52, pb.getId());
        cstmt.addBatch();
@@ -600,9 +561,8 @@ public class TransportationInterface extends BaseInterface
         sql.append("DATE_PROCESSED = SYSDATE");
       else
       {
-        sql.append("COMMENTS = '");
-        sql.append(comments);
-        sql.append("'");
+        sql.append("COMMENTS = ");
+        sql.append(CommonUtility.toVarchar(comments));
       }
       sql.append(" WHERE ID = ");
       sql.append(id);
@@ -656,7 +616,7 @@ public class TransportationInterface extends BaseInterface
     return fillQty;
   }
 
-  private void setEnvHaz(ProductBean pb) //TODO
+  private void setEnvHaz(ProductBean pb) 
   {
     try
     {
@@ -666,7 +626,7 @@ public class TransportationInterface extends BaseInterface
       {
         pb.setUnNumber("UN3082");
         pb.setPackingGroup("III");
-        populateHazLabel(pb, false, false);
+        populateVaDotsMstData(pb, false, false);
       }
     }
     catch (Exception e)
@@ -675,7 +635,7 @@ public class TransportationInterface extends BaseInterface
     }
   }
 
-  private void setNonBulk(ProductBean pb) //TODO
+  private void setNonBulk(ProductBean pb) 
   {
     try
     {
@@ -697,14 +657,16 @@ public class TransportationInterface extends BaseInterface
     }
   }
   
-  private void populateHazLabel(ProductBean pb, boolean isEMEAIInstance, boolean isASIAPACInstance)
+  private void populateVaDotsMstData(ProductBean pb, boolean isEMEAIInstance, boolean isASIAPACInstance)
   {
     PreparedStatement populateVaDotsMstDataPstmt = null;
     ResultSet populateVaDotsMstDataRs = null;
     try
     {
       StringBuilder sb = new StringBuilder();
-      sb.append("select haz_label1, haz_label2, haz_label3 ");
+      sb.append("select shipping_name, hazard_class, ");
+      sb.append("subsidary_risk, erg_code, haz_label1, ");
+      sb.append("haz_label2, haz_label3, ems_no, tunnel_code ");
       sb.append("from va_dots_mst ");
       sb.append("where un_number = ? and ship_mthd = ? and language = 'EN'");
 
@@ -723,9 +685,15 @@ public class TransportationInterface extends BaseInterface
       populateVaDotsMstDataRs = populateVaDotsMstDataPstmt.executeQuery();
       if (populateVaDotsMstDataRs.next())
       {
-        pb.setHazLabel1(populateVaDotsMstDataRs.getString(1));
-        pb.setHazLabel2(populateVaDotsMstDataRs.getString(2));
-        pb.setHazLabel3(populateVaDotsMstDataRs.getString(3));
+        pb.setShippingName(populateVaDotsMstDataRs.getString(1));
+        pb.setHazardClass(populateVaDotsMstDataRs.getString(2));
+        pb.setSubsidaryRisk(populateVaDotsMstDataRs.getString(3));
+        pb.setErgCode(populateVaDotsMstDataRs.getString(4));
+        pb.setHazLabel1(populateVaDotsMstDataRs.getString(5));
+        pb.setHazLabel2(populateVaDotsMstDataRs.getString(6));
+        pb.setHazLabel3(populateVaDotsMstDataRs.getString(7));
+        pb.setEmsNo(populateVaDotsMstDataRs.getString(8));
+        pb.setTunnelCode(populateVaDotsMstDataRs.getString(9));
       }
       else
       {

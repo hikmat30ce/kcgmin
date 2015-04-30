@@ -34,6 +34,7 @@ public class ProductBean
   private String adrNumber;
   private String mfagNo;
   private String emsNo;
+  private String tunnelCode;
   private String hazQty1;
   private String unNumSeq;
   private String zLabel;
@@ -668,5 +669,15 @@ public class ProductBean
   public String getEuViscosityException()
   {
     return euViscosityException;
+  }
+
+  public void setTunnelCode(String tunnelCode)
+  {
+    this.tunnelCode = tunnelCode;
+  }
+
+  public String getTunnelCode()
+  {
+    return tunnelCode;
   }
 }

@@ -2,7 +2,8 @@ package com.valspar.interfaces.clx.shipmentstatus.outboundshipmentstatus.program
 
 import com.valspar.clx.returnvalue.generated.ReturnValue;
 import com.valspar.interfaces.clx.common.api.CLXBaseImportAPI;
-import com.valspar.interfaces.clx.common.beans.ShipmentStatusStagingBean;
+import com.valspar.interfaces.clx.common.beans.*;
+import com.valspar.interfaces.clx.common.dao.ClxDAO;
 import com.valspar.interfaces.clx.shipmentstatus.outboundshipmentstatus.dao.OutboundShipmentStatusDAO;
 import com.valspar.interfaces.common.BaseInterface;
 import com.valspar.interfaces.common.servlets.PropertiesServlet;
@@ -14,46 +15,50 @@ public class OutboundShipmentStatus extends BaseInterface
 {
   private static Logger log4jLogger = Logger.getLogger(OutboundShipmentStatus.class);
 
-  public OutboundShipmentStatus()
-  {
-  }
-
   public void execute()
   {
-    log4jLogger.info("Starting CLX Outbound Shipment Status Interface...");
-    String senderIdKey = getParameterValue("senderIdKey");
-    ShipmentStatusStagingBean lastShipmentStatusStagingBean = new ShipmentStatusStagingBean();
-
+    ShipmentStatusStagingBean lastShipmentStatusStagingBean = null;
+    boolean deleteShipmentStatusLogFile = true;
     try
     {
-      for (ShipmentStatusStagingBean shipmentStatusStagingBean: OutboundShipmentStatusDAO.fetchShipmentStatusDeliveries(senderIdKey))
-      {
-        shipmentStatusStagingBean.setSenderId(PropertiesServlet.getProperty(senderIdKey));
-        shipmentStatusStagingBean.setSenderIdKey(senderIdKey);
-        lastShipmentStatusStagingBean = shipmentStatusStagingBean;
-        log4jLogger.info("Processing transId" + shipmentStatusStagingBean.getTransId());
-        shipmentStatusStagingBean.setShipmentStatusLineBeanList(OutboundShipmentStatusDAO.fetchShipmentStatusDeliveryLines(shipmentStatusStagingBean));
-        log4jLogger.info("shipmentStatusLineBeanList size:" + shipmentStatusStagingBean.getShipmentStatusLineBeanList().size());
-        if (!shipmentStatusStagingBean.getShipmentStatusLineBeanList().isEmpty())
+      log4jLogger.info("Starting CLX Outbound Shipment Status Interface...");
+      List<ShipmentStatusStagingBean> shipmentStatusStagingBeanList = OutboundShipmentStatusDAO.fetchShipmentStatusDeliveries(getParameterValue("senderIdKey"));
+      if (!shipmentStatusStagingBeanList.isEmpty())
+      { 
+        ClxDAO.updateStagingTableForList(shipmentStatusStagingBeanList);
+        for (ShipmentStatusStagingBean shipmentStatusStagingBean: shipmentStatusStagingBeanList)
         {
-          importShipmentStatus(shipmentStatusStagingBean);
+          deleteShipmentStatusLogFile = false;
+          lastShipmentStatusStagingBean = shipmentStatusStagingBean;
+          log4jLogger.info("Processing transId" + shipmentStatusStagingBean.getTransId());
+          shipmentStatusStagingBean.setShipmentStatusLineBeanList(OutboundShipmentStatusDAO.fetchShipmentStatusDeliveryLines(shipmentStatusStagingBean));
+          log4jLogger.info("shipmentStatusLineBeanList size:" + shipmentStatusStagingBean.getShipmentStatusLineBeanList().size());
+          if (!shipmentStatusStagingBean.getShipmentStatusLineBeanList().isEmpty())
+          {
+            importShipmentStatus(shipmentStatusStagingBean);
+          }
+          else
+          {
+            log4jLogger.error("shipmentStatusLineBeanList is empty! TransId:" + shipmentStatusStagingBean.getTransId());
+            shipmentStatusStagingBean.setReturnMessage("No shipment status lines found");
+            shipmentStatusStagingBean.setReturnCode("E");
+            ClxDAO.updateStagingTableForBean(shipmentStatusStagingBean);
+          }
+          log4jLogger.info("Completed processing transId: " + shipmentStatusStagingBean.getTransId());
         }
-        else
-        {
-          log4jLogger.error("shipmentStatusLineBeanList is empty! TransId:" + shipmentStatusStagingBean.getTransId());
-          shipmentStatusStagingBean.setReturnMessage("No shipment status lines found");
-          shipmentStatusStagingBean.setReturnCode("E");
-          OutboundShipmentStatusDAO.updateShipmentStatusStagingTable(shipmentStatusStagingBean);
-        }
-        log4jLogger.info("Completed processing transId: " + shipmentStatusStagingBean.getTransId());
       }
     }
     catch (Exception e)
     {
+      deleteShipmentStatusLogFile = false;
       log4jLogger.error(e);
       sendShipmentStatusNotifcationEmail(lastShipmentStatusStagingBean, e);
     }
-    log4jLogger.info("End CLX Outbound Shipment Status Interface.");
+    finally
+    {
+      this.setDeleteLogFile(deleteShipmentStatusLogFile);
+      log4jLogger.info("End CLX Outbound Shipment Status Interface.");
+    }
   }
 
   private void importShipmentStatus(ShipmentStatusStagingBean shipmentStatusStagingBean)
@@ -61,10 +66,11 @@ public class OutboundShipmentStatus extends BaseInterface
     try
     {
       CLXBaseImportAPI clxBaseImportAPI = new CLXBaseImportAPI();
-      
+
       if (shipmentStatusStagingBean.getShipmentStatusLineBeanList().get(0).getShipmentId() != null)
       {
         shipmentStatusStagingBean.setGeneratedXmlMessage(OutboundShipmentStatusCreator.createShipmentStatusXml(shipmentStatusStagingBean));
+        ClxDAO.insertAuditXML(shipmentStatusStagingBean.getSenderIdKey(), shipmentStatusStagingBean.getTransId(), null, shipmentStatusStagingBean.getGeneratedXmlMessage(), "OutboundShipmentStatus");
         ReturnValue returnValue = clxBaseImportAPI.importDocument(shipmentStatusStagingBean.getGeneratedXmlMessage());
         shipmentStatusStagingBean.setReturnCode(returnValue.getReturnCode());
         shipmentStatusStagingBean.setReturnMessage(returnValue.getMessage());
@@ -90,7 +96,7 @@ public class OutboundShipmentStatus extends BaseInterface
     {
       if (shipmentStatusStagingBean != null && shipmentStatusStagingBean.getTransId() != null && shipmentStatusStagingBean.getReturnCode() != null)
       {
-        OutboundShipmentStatusDAO.updateShipmentStatusStagingTable(shipmentStatusStagingBean);
+        ClxDAO.updateStagingTableForBean(shipmentStatusStagingBean);
       }
     }
   }

@@ -3,6 +3,7 @@ package com.valspar.interfaces.clx.shipmentstatus.outboundshipmentstatus.dao;
 import com.valspar.interfaces.clx.common.beans.*;
 import com.valspar.interfaces.clx.shipmentstatus.outboundshipmentstatus.program.OutboundShipmentStatus;
 import com.valspar.interfaces.common.beans.ConnectionAccessBean;
+import com.valspar.interfaces.common.servlets.PropertiesServlet;
 import com.valspar.interfaces.common.utils.*;
 import java.util.*;
 import oracle.jdbc.*;
@@ -11,18 +12,11 @@ import org.apache.log4j.Logger;
 public final class OutboundShipmentStatusDAO
 {
   private static Logger log4jLogger = Logger.getLogger(OutboundShipmentStatusDAO.class);  
-  
-  public OutboundShipmentStatusDAO()
-  {
-  }
-
 
   public static List<ShipmentStatusStagingBean> fetchShipmentStatusDeliveries(String senderIdKey)
   {
     log4jLogger.info("OutboundShipmentStatusDAO.fetchShipmentStatusDeliveries() - Building order staging bean list from 11i...");
-
     List<ShipmentStatusStagingBean> shipmentStatusStagingBeanList = new ArrayList<ShipmentStatusStagingBean>();
-
     OracleConnection conn = null;
     OraclePreparedStatement pst = null;
     OracleResultSet rs = null;
@@ -45,21 +39,23 @@ public final class OutboundShipmentStatusDAO
       while (rs.next())
       {
         shipmentStatusStagingBean = new ShipmentStatusStagingBean();
+        shipmentStatusStagingBean.setSenderId(PropertiesServlet.getProperty(senderIdKey));
+        shipmentStatusStagingBean.setSenderIdKey(senderIdKey);
         shipmentStatusStagingBean.setActionCode(rs.getString("actionCode"));
         shipmentStatusStagingBean.setDeliveryNumber(rs.getString("delivery"));
-        shipmentStatusStagingBean.setBatchNumber(rs.getString("transferBatch"));
+        shipmentStatusStagingBean.setTransferBatch(rs.getString("transferBatch"));
         shipmentStatusStagingBean.setOrgnCode(rs.getString("orgnCode"));
         shipmentStatusStagingBean.setEventType(rs.getString("eventType"));
         shipmentStatusStagingBean.setTransId(rs.getString("transId"));
         shipmentStatusStagingBean.setCreationDate(rs.getDate("creationDate"));
         shipmentStatusStagingBean.setLastUpdateDate(rs.getDate("lastUpdateDate"));
+        shipmentStatusStagingBean.setStatus("P");
         shipmentStatusStagingBeanList.add(shipmentStatusStagingBean);
       }
     }
     catch (Exception e)
     {
       log4jLogger.error(e);
-      OutboundShipmentStatus.sendShipmentStatusNotifcationEmail(shipmentStatusStagingBean, e);
     }
     finally
     {
@@ -74,9 +70,7 @@ public final class OutboundShipmentStatusDAO
   public static List<ShipmentStatusLineBean> fetchShipmentStatusDeliveryLines(ShipmentStatusStagingBean shipmentStatusStagingBean)
   {
     log4jLogger.info("OutboundShipmentStatusDAO.fetchShipmentStatusDeliveryLines() - Building shipment status lines from 11i");
-
     List<ShipmentStatusLineBean> shipmentStatuses = new ArrayList<ShipmentStatusLineBean>();
-
     OracleConnection conn = null;
     OraclePreparedStatement pst = null;
     OracleResultSet rs = null;
@@ -84,7 +78,6 @@ public final class OutboundShipmentStatusDAO
     try
     {
       conn = (OracleConnection) ConnectionAccessBean.findConnection(shipmentStatusStagingBean.getSenderIdKey());
-
       StringBuilder sb = new StringBuilder();
       sb.append("SELECT DOC_ID docId, ");
       sb.append("       SENDER_ORG_NAME senderOrgName, ");
@@ -96,8 +89,6 @@ public final class OutboundShipmentStatusDAO
       sb.append("       TIMEZONE timezone, ");
       sb.append("       SHIPMENT_ID shipmentId, ");
       sb.append("       SS_BOL bol, ");
-//      sb.append("       TRANSFER_NO trasfer, ");
- //     sb.append("       ORGN_CODE orgnCode, ");
       sb.append("       REFERENCE1 reference1, ");
       sb.append("       REFERENCE1_TYPE reference1Type, ");
       sb.append("       REFERENCE2 reference2, ");
@@ -111,7 +102,8 @@ public final class OutboundShipmentStatusDAO
       sb.append("       CREATION_DATE intCreateDate, ");
       sb.append("       LAST_UPDATE_DATE intUpdateDate ");
       sb.append("  FROM APPS.VCA_CLX_OUTBOUND_SHIP_STATUS_V  ");
-      sb.append(" WHERE TRANS_ID = :TRANS_ID ");
+      sb.append(" WHERE STATUS = 'P' ");
+      sb.append("   AND TRANS_ID = :TRANS_ID ");
 
       pst = (OraclePreparedStatement) conn.prepareStatement(sb.toString());
       pst.setStringAtName("TRANS_ID", shipmentStatusStagingBean.getTransId());
@@ -155,43 +147,5 @@ public final class OutboundShipmentStatusDAO
       JDBCUtil.close(conn);
     }
     return shipmentStatuses;
-  }
-
-  public static String updateShipmentStatusStagingTable(ShipmentStatusStagingBean shipmentStatusStagingBean)
-  {
-    log4jLogger.info("OutboundShipmentStatusDAO.updateShipmentStatusStagingTable() - Updating delivery staging table... ");
-    String returnMessage = null;
-    OracleConnection conn = (OracleConnection) ConnectionAccessBean.findConnection(shipmentStatusStagingBean.getSenderIdKey());
-    OraclePreparedStatement pst = null;
-    String erpUserId = OracleAppsUtility.getERPUserId(conn, "TMS");
-
-    try
-    {
-      StringBuilder sb = new StringBuilder();
-      sb.append("UPDATE VALSPAR.VCA_CLX_DELIVERY_STAGE ");
-      sb.append("   SET STATUS = :STATUS, ");
-      sb.append("       LAST_UPDATED_BY = :ERP_USER_ID, ");
-      sb.append("       LAST_UPDATE_DATE = SYSDATE, ");
-      sb.append("       ERROR_MESSAGE = SUBSTR(:ERROR_MESSAGE, 1, 2000) ");
-      sb.append(" WHERE ROWID = :ROW_ID ");
-
-      pst = (OraclePreparedStatement) conn.prepareStatement(sb.toString());
-      pst.setStringAtName("ROW_ID", shipmentStatusStagingBean.getTransId());
-      pst.setStringAtName("STATUS", shipmentStatusStagingBean.getInterfaceStatusCode());
-      pst.setStringAtName("ERP_USER_ID", erpUserId);
-      pst.setStringAtName("ERROR_MESSAGE", shipmentStatusStagingBean.getReturnMessage());
-      pst.executeUpdate();
-    }
-    catch (Exception e)
-    {
-      returnMessage = "ERROR - OutboundShipmentStatusDAO.updateShipmentStatusStagingTable() " + e;
-      log4jLogger.error(returnMessage);
-    }
-    finally
-    {
-      JDBCUtil.close(pst);
-      JDBCUtil.close(conn);
-    }
-    return returnMessage;
   }
 }

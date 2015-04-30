@@ -28,7 +28,7 @@ public class RawMaterialsInterface extends BaseInterface
       setWercsConn((OracleConnection) ConnectionAccessBean.getConnection(DataSource.WERCS));
       ArrayList<WercsItemBean> ar = buildWercsItemBeans();
       checkItemsWPG(ar);
-      for (DataSource datasource: CommonUtility.getERPDataSourceList())
+      for (DataSource datasource: CommonUtility.getERPDataSourceList6X())  //TODO
       {
         addItems(ar, datasource);
         addLots(ar, datasource, "0");
@@ -120,7 +120,7 @@ public class RawMaterialsInterface extends BaseInterface
     {
       conn = (OracleConnection) ConnectionAccessBean.getConnection(datasource);
       log4jLogger.info("Starting to add items for " + ConnectionUtility.buildDatabaseName(conn));
-      cstmt = conn.prepareCall("{call VCA_ITEM_CREATE_WRAPPER(?,?,?,?,?)}");
+      cstmt = conn.prepareCall("{call VCA_ITEM_CREATE_WRAPPER_6X(?,?,?,?,?)}");
       for (WercsItemBean wb: ar)
       {
         cstmt.clearParameters();
@@ -156,7 +156,7 @@ public class RawMaterialsInterface extends BaseInterface
     {
       conn = (OracleConnection) ConnectionAccessBean.getConnection(datasource);
       log4jLogger.info("Starting to add lots for " + ConnectionUtility.buildDatabaseName(conn));
-      cstmt = conn.prepareCall("{call VCA_LOT_CREATE_WRAPPER(?,?,?,?)}");
+      cstmt = conn.prepareCall("{call VCA_LOT_CREATE_WRAPPER_6X(?,?,?,?)}");
       for (WercsItemBean wb: ar)
       {
         cstmt.setString(1, datasource.getLogUser());
@@ -190,7 +190,7 @@ public class RawMaterialsInterface extends BaseInterface
     {
       conn = (OracleConnection) ConnectionAccessBean.getConnection(datasource);
       log4jLogger.info("Starting to add lots cnv for " + ConnectionUtility.buildDatabaseName(conn));
-      cstmt = conn.prepareCall("{call VCA_ITEM_LOT_CONV_WRAPPER(?,?,?)}");
+      cstmt = conn.prepareCall("{call VCA_ITEM_LOT_CONV_WRAPPER_6X(?,?,?)}");
       for (WercsItemBean wb: ar)
       {
         cstmt.setString(1, datasource.getLogUser());

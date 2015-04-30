@@ -86,7 +86,6 @@ public class CLXBaseImportAPI
     }
     catch (Exception e)
     {
-      System.out.println("Exception in CLXBaseImportAPI.bindCredentials " + e);
       log4jLogger.error("Exception in CLXBaseImportAPI.bindCredentials " + e);
     }
   }
@@ -165,7 +164,6 @@ public class CLXBaseImportAPI
   {
     ReturnValue returnValue = new ReturnValue();
     String returnXMLString = importDocument(getClxAccountNumber(), getClxUser(), getClxPassword(), xmlString);
-    log4jLogger.info(returnXMLString);
     returnXMLString = returnXMLString.replace("<!DOCTYPE ReturnValue PUBLIC \"ReturnValue\" \"ReturnValue.dtd\" >", "");
     String message = StringUtils.substringBetween(returnXMLString, "<Message>", "</Message>");
     if (message != null)

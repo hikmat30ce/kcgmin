@@ -10,6 +10,7 @@ public enum DataSource
   DROMONTKANK("DromontKankDS", "jdbc/dromontKank", "Dromont Kankakee", DbConnectionType.SQL_SERVER, null, null, null, null, null, null, null, null),
   DROMONTGARPITT("DromontGarPittDS", "jdbc/dromontGarPitt", "Dromont Gar-Pitt", DbConnectionType.SQL_SERVER, null, null, null, null, null, null, null, null),
   EMEAI("InternationalDS", "jdbc/in", "EMEAI", DbConnectionType.ORACLE, "IN", "toin", "INPR", null, "RPTOIN", "International", "1152", null),
+  EMEAI6X("InternationalDS", "jdbc/in6x", "EMEAI", DbConnectionType.ORACLE, "IN", "toin", "IN03", null, "RPTOIN", "International", "1152", null),
   FORMULATION("FormulationDS", "jdbc/formulation", "Formulation", DbConnectionType.ORACLE, null, null, null, null, null, null, null, null),
   GUARDSMAN("GuardsmanRetailerDS", "jdbc/guardsmanretailer", "Guardsman Retailer", DbConnectionType.ORACLE, null, null, null, null, null, null, null, null),
   JDA("JdaDs", "jdbc/jda", "JDA", DbConnectionType.ORACLE, null, null, null, null, null, null, null, null),

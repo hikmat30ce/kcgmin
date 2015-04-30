@@ -1,6 +1,5 @@
 package com.valspar.interfaces.hr.timeforce.beans;
 
-import com.valspar.interfaces.hr.timeforce.program.TimeForceInterface;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import org.apache.commons.lang3.*;
@@ -45,8 +44,8 @@ public class Employee
       this.getLocationList().add("USA- Hagerstown");
       this.getLocationList().add("USA- Matteson");
       this.getLocationList().add("USA- Miller Park");
-      this.getLocationList().add("USA- Minneapolis Headquarters");
-      this.getLocationList().add("USA- Minneapolis VAST Center");
+      this.getLocationList().add("USA- Minneapolis VAST Center & Headquarters");
+      this.getLocationList().add("USA- Minneapolis Downtown");
       this.getLocationList().add("USA- Minneapolis Lab");
       this.getLocationList().add("USA- St Paul");
       this.getLocationList().add("USA- Wheeling");
@@ -71,15 +70,12 @@ public class Employee
       this.getLocationList().add("USA- Marengo");
       this.getLocationList().add("USA- Medina");
       this.getLocationList().add("USA- Moline");
-      this.getLocationList().add("USA- Mooresville");
+      this.getLocationList().add("USA- Davidson");
       this.getLocationList().add("USA- Rockford");
       this.getLocationList().add("USA- Sanford");
       this.getLocationList().add("USA- Statesville");
-
-// 1-22-2015 - Karen said these Locations might not be a part of phase 3
-//      this.getLocationList().add("USA- Grand Rapids");
-//      this.getLocationList().add("USA- Salem");
-
+      this.getLocationList().add("USA- Grand Rapids");
+      this.getLocationList().add("USA- Sumpter");
     }
 
     return this.getLocationList().contains(this.getLocation());

@@ -271,7 +271,7 @@ public class OpenScanInterface extends BaseInterface
     {
       FTPFile file = fileArray[i];
       log4jLogger.info("OpenScanInterface.hsbcFiles() - Processing file " + file.getName());
-      HSBCImageFileBean hsbcImageFileBean = new HSBCImageFileBean(file.getName());
+      HSBCImageFileBean hsbcImageFileBean = new HSBCImageFileBean(file.getName(), this.getStartDate());
 
       if (hsbcImageFileBean.getHsbcLocalRootDirectory() != null)
       {

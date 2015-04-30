@@ -252,7 +252,14 @@ public class OrderLineBean
 
   public String getPaymentMethod()
   {
-    return paymentMethod;
+    if (StringUtils.equalsIgnoreCase(this.getReference8(), "WHSE XFER"))
+    {
+      return "PREPAID";
+    }
+    else
+    {
+      return this.paymentMethod;
+    }
   }
 
   public void setReference1(String reference1)

@@ -1,13 +1,15 @@
 package com.valspar.interfaces.common.beans;
 
+import java.io.File;
+
 public class InterfaceInfoBean
 {
-  private String logFileLocation;
+  private File logFile;
   private String processId = "-1";
 
-  public InterfaceInfoBean(String logFileLocation)
+  public InterfaceInfoBean(File logFile)
   {
-    this.logFileLocation = logFileLocation;
+    this.logFile = logFile;
   }
 
   public void setProcessId(String processId)
@@ -20,13 +22,13 @@ public class InterfaceInfoBean
     return processId;
   }
 
-  public void setLogFileLocation(String logFileLocation)
+  public void setLogFile(File logFile)
   {
-    this.logFileLocation = logFileLocation;
+    this.logFile = logFile;
   }
 
-  public String getLogFileLocation()
+  public File getLogFile()
   {
-    return logFileLocation;
+    return logFile;
   }
 }

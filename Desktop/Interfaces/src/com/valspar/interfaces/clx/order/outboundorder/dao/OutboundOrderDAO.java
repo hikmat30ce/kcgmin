@@ -3,23 +3,21 @@ package com.valspar.interfaces.clx.order.outboundorder.dao;
 import com.valspar.interfaces.clx.common.beans.*;
 import com.valspar.interfaces.clx.order.outboundorder.program.OutboundOrder;
 import com.valspar.interfaces.common.beans.ConnectionAccessBean;
+import com.valspar.interfaces.common.enums.DataSource;
 import com.valspar.interfaces.common.servlets.PropertiesServlet;
 import com.valspar.interfaces.common.utils.*;
 import java.util.*;
 import oracle.jdbc.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public final class OutboundOrderDAO
 {
   private static Logger log4jLogger = Logger.getLogger(OutboundOrderDAO.class);
 
-  public OutboundOrderDAO()
+  public static List<OrderStagingBean> fetchOrders(String senderIdKey)
   {
-  }
-
-  public static List<OrderStagingBean> fetchOrderNumbers(String senderIdKey)
-  {
-    log4jLogger.info("OutboundOrderDAO.fetchOrderNumbers() - Building order staging bean list from 11i...");
+    log4jLogger.info("OutboundOrderDAO.fetchOrders() - Building order staging bean list from 11i...");
 
     List<OrderStagingBean> orderStagingBeanList = new ArrayList<OrderStagingBean>();
 
@@ -45,6 +43,8 @@ public final class OutboundOrderDAO
       while (rs.next())
       {
         orderStagingBean = new OrderStagingBean();
+        orderStagingBean.setSenderId(PropertiesServlet.getProperty(senderIdKey));
+        orderStagingBean.setSenderIdKey(senderIdKey);
         orderStagingBean.setActionCode(rs.getString("actionCode"));
         orderStagingBean.setDeliveryNumber(rs.getString("delivery"));
         orderStagingBean.setTransferBatch(rs.getString("transferBatch"));
@@ -54,6 +54,7 @@ public final class OutboundOrderDAO
         orderStagingBean.setCreationDate(rs.getDate("creationDate"));
         orderStagingBean.setLastUpdateDate(rs.getDate("lastUpdateDate"));
         orderStagingBean.setBolPrintDate(rs.getDate("bolPrintDate"));
+        orderStagingBean.setStatus("P");
         orderStagingBeanList.add(orderStagingBean);
       }
     }
@@ -67,7 +68,7 @@ public final class OutboundOrderDAO
       JDBCUtil.close(pst, rs);
       JDBCUtil.close(conn);
     }
-    log4jLogger.info("OutboundOrderDAO.fetchOrderNumbers() - Finished building order staging bean list.");
+    log4jLogger.info("OutboundOrderDAO.fetchOrders() - Finished building order staging bean list.");
 
     return orderStagingBeanList;
   }
@@ -143,7 +144,6 @@ public final class OutboundOrderDAO
       sb.append("       REFERENCE12_TYPE reference12Type, ");
       sb.append("       REFERENCE13 reference13, ");
       sb.append("       REFERENCE13_TYPE reference13Type, ");
-      sb.append("       VCA_TMS_COMMON_PKG.VCA_TEMP_CONTROL_ITEM(SS_PRODUCT_ID) reference14, ");
       sb.append("       REFERENCE14_TYPE reference14Type, ");
       sb.append("       REFERENCE15 reference15, ");
       sb.append("       REFERENCE15_TYPE reference15Type, ");
@@ -178,11 +178,7 @@ public final class OutboundOrderDAO
       sb.append("       ATTRIBUTE19 attribute19, ");
       sb.append("       ATTRIBUTE20 attribute20, ");
       sb.append("       SERVICE_TYPE serviceType, ");
-      sb.append("       CASE ");
-      sb.append("         WHEN VCA_TMS_COMMON_PKG.IS_TEMP_CONTROL_DELIVERY(SS_BOL) = 'Y' ");
-      sb.append("         THEN 'RT' ");
-      sb.append("         ELSE EQUIPMENT_DESCRIPTION ");
-      sb.append("       END equipmentDesc, ");
+      sb.append("       EQUIPMENT_DESCRIPTION equipmentDesc, ");
       sb.append("       GROSS_WEIGHT_UOM grossWeightUOM, ");
       sb.append("       GROSS_WEIGHT grossWeight, ");
       sb.append("       SS_BOL bol, ");
@@ -239,7 +235,7 @@ public final class OutboundOrderDAO
       sb.append("       CREATION_DATE intCreateDate, ");
       sb.append("       LAST_UPDATE_DATE intUpdateDate ");
       sb.append("  FROM APPS.VCA_CLX_ORDER_INTERFACE_V ");
-      sb.append(" WHERE STATUS = 'N' ");
+      sb.append(" WHERE STATUS = 'P' ");
       sb.append(" AND TRANS_ID = :TRANS_ID ");
       sb.append(" ORDER BY SS_PRODUCT_ID");
 
@@ -264,7 +260,6 @@ public final class OutboundOrderDAO
         bean.setShipmentId(rs.getString("shipmentId"));
         bean.setLineHaulMode(rs.getString("lineHaulMode"));
         bean.setMovementType(rs.getString("movementType"));
-        bean.setPaymentMethod(rs.getString("paymentMethod"));
         bean.setReference1(rs.getString("reference1"));
         bean.setReference1Type(rs.getString("reference1Type"));
         bean.setReference2(rs.getString("reference2"));
@@ -291,7 +286,6 @@ public final class OutboundOrderDAO
         bean.setReference12Type(rs.getString("reference12Type"));
         bean.setReference13(rs.getString("reference13"));
         bean.setReference13Type(rs.getString("reference13Type"));
-        bean.setReference14(rs.getString("reference14"));
         bean.setReference14Type(rs.getString("reference14Type"));
         bean.setReference15(rs.getString("reference15"));
         bean.setReference15Type(rs.getString("reference15Type"));
@@ -305,6 +299,8 @@ public final class OutboundOrderDAO
         bean.setReference19Type(rs.getString("reference19Type"));
         bean.setReference20(rs.getString("reference20"));
         bean.setReference20Type(rs.getString("reference20Type"));
+        bean.setPaymentMethod(rs.getString("paymentMethod"));
+        orderStagingBean.setCarrierSCAC(rs.getString("reference5"));
         bean.setAttribute1(rs.getString("attribute1"));
         bean.setAttribute2(rs.getString("attribute2"));
         bean.setAttribute3(rs.getString("attribute3"));
@@ -325,7 +321,11 @@ public final class OutboundOrderDAO
         bean.setAttribute18(rs.getString("attribute18"));
         bean.setAttribute19(rs.getString("attribute19"));
         bean.setAttribute20(rs.getString("attribute20"));
-        bean.setServiceType(rs.getString("serviceType"));
+        bean.setServiceType(rs.getString("serviceType"));        
+        if (StringUtils.equalsIgnoreCase(bean.getServiceType(), "EXPEDITE"))
+        {
+          orderStagingBean.setExpedited(true);
+        }
         bean.setEquipmentDescription(rs.getString("equipmentDesc"));
         bean.setGrossWeightUOM(rs.getString("grossWeightUOM"));
         bean.setGrossWeight(rs.getString("grossWeight"));
@@ -387,7 +387,6 @@ public final class OutboundOrderDAO
     catch (Exception e)
     {
       log4jLogger.error(e);
-      //OutboundOrder.sendOrderNotifcationEmail(senderId, e);
     }
     finally
     {
@@ -399,42 +398,45 @@ public final class OutboundOrderDAO
     return orderLineBeanList;
   }
   
-  public static String updateOrderStagingTable(OrderStagingBean orderStagingBean)
+  public static void populateTempControl(OrderStagingBean orderStagingBean)
   {
-    log4jLogger.info("OutboundOrderDAO.updateOrderStagingTable() - Updating order staging table... ");
-    String returnMessage = null;
-    OracleConnection conn = (OracleConnection) ConnectionAccessBean.findConnection(orderStagingBean.getSenderIdKey());
+    log4jLogger.info("OutboundOrderDAO.populateTempControl() - Getting temperature control data from Regulatory");
+    OracleConnection conn = null;
     OraclePreparedStatement pst = null;
-    String erpUserId = OracleAppsUtility.getERPUserId(conn, "TMS");
+    OracleResultSet rs = null;
 
     try
     {
-      StringBuilder sb = new StringBuilder();
-      sb.append("UPDATE VALSPAR.VCA_CLX_ORDER_STAGE ");
-      sb.append("   SET STATUS = :STATUS, ");
-      sb.append("       LAST_UPDATED_BY = :ERP_USER_ID, ");
-      sb.append("       LAST_UPDATE_DATE = SYSDATE, ");
-      sb.append("       ERROR_MESSAGE = SUBSTR(:ERROR_MESSAGE, 1, 2000) ");
-      sb.append(" WHERE ROWID = :ROW_ID ");
+      conn = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.REGULATORY);
 
+      StringBuilder sb = new StringBuilder();
+      sb.append("SELECT B.F_DATA fData, B.F_DATA_CODE fDataCode ");
+      sb.append("  FROM T_PRODUCT_ALIAS_NAMES A, ");
+      sb.append("       T_PROD_DATA B ");
+      sb.append(" WHERE A.F_PRODUCT = B.F_PRODUCT ");
+      sb.append("   AND B.F_DATA_CODE IN ('STRABV', 'STRBLW') ");
+      sb.append("   AND A.F_ALIAS IN (");
+      sb.append(CommonUtility.stringToInListForVarchar(orderStagingBean.getProductIdList()));
+      sb.append("                    ) ");
+      sb.append(" ORDER BY B.F_DATA_CODE");
+      
       pst = (OraclePreparedStatement) conn.prepareStatement(sb.toString());
-      pst.setStringAtName("ROW_ID", orderStagingBean.getTransId());
-      pst.setStringAtName("STATUS", orderStagingBean.getInterfaceStatusCode());
-      pst.setStringAtName("ERP_USER_ID", erpUserId);
-      pst.setStringAtName("ERROR_MESSAGE", orderStagingBean.getReturnMessage());
-      pst.executeUpdate();
+      rs = (OracleResultSet) pst.executeQuery();
+      if (rs.next())
+      {
+        orderStagingBean.setTempControlled(true);
+      }
     }
     catch (Exception e)
     {
-      returnMessage = "ERROR - OutboundOrderDAO.updateOrderStagingTable() " + e;
-      log4jLogger.error(returnMessage);
+      log4jLogger.error(e);
     }
     finally
     {
-      JDBCUtil.close(pst);
+      JDBCUtil.close(pst, rs);
       JDBCUtil.close(conn);
     }
-    return returnMessage;
+    log4jLogger.info("OutboundOrderDAO.populateTempControl() - Finished populating temperature control data on staging beans");
   }
   
   public static String updateInventoryTransferMaster(OrderStagingBean orderStagingBean)

@@ -3,6 +3,7 @@ package com.valspar.interfaces.wercs.rollup.program;
 import com.valspar.interfaces.common.BaseInterface;
 import com.valspar.interfaces.common.beans.ConnectionAccessBean;
 import com.valspar.interfaces.common.enums.DataSource;
+import com.valspar.interfaces.common.utils.CommonUtility;
 import com.valspar.interfaces.wercs.common.etl.ETLUtility;
 import com.valspar.interfaces.wercs.common.etl.beans.IprocessBean;
 import com.valspar.interfaces.common.utils.JDBCUtil;
@@ -42,10 +43,10 @@ public class RollupInterface extends BaseInterface
         {
           log4jLogger.info("Processing Rollup ID " + rollupBean.getRollupId());
           processRollup(rollupBean);
-          if (!rollupBean.isError())
+          if (!rollupBean.isError())  
           {
             updateQueueStatus(rollupBean, 2);
-            addToEmail("Rollup ID " + rollupBean.getRollupId() + " is complete. Please see logs for details.");
+            addToEmail("The items from Rollup ID " + rollupBean.getRollupId() + " have been added to the queue. Please see logs for details.");
           }
           else
           {
@@ -184,7 +185,6 @@ public class RollupInterface extends BaseInterface
         sb.append("where c.f_product = a.f_product ");
         sb.append("and a.f_alias = i.rollup_item ");
         sb.append("and t.f_product = c.f_component_id and t.f_data_code = 'COSTCL' and t.f_text_code = 'COSTCL06' ");
-        ;
         sb.append("and rollup_id = ");
         sb.append(rollupId);
       }
@@ -542,10 +542,10 @@ public class RollupInterface extends BaseInterface
         sb.append("       AND TP.PARAM_CODE(+) = 'FL-POINT-C' ");
         sb.append("       AND a.f_input_product = an.f_product ");
         sb.append("       AND a.f_product = t.f_product ");
-        sb.append("       and t.f_data_code = 'COSTCL' and t.f_text_code IN ('COSTCL03', 'COSTCL07')  ");
+        sb.append("       and t.f_data_code = 'COSTCL' and t.f_text_code IN ('COSTCL03', 'COSTCL04', 'COSTCL07')  ");
         sb.append("       AND i.rollup_id = ");
         sb.append(rollupId);
-        sb.append("UNION ");
+        sb.append(" UNION ");
         sb.append("SELECT DISTINCT a.f_product,  ");
         sb.append("       NVL (FSI.GET_CLASS_XREF@TOFM (FF.CLASS), FF.CLASS) AS formula_class, ");
         sb.append("       NVL (CF_FLASH_POINT, ROUND ( (TP.PVALUE * 1.8) + 32, 0)) AS FLASHF, ");
@@ -577,7 +577,67 @@ public class RollupInterface extends BaseInterface
         sb.append("       AND TP.FORMULA_ID(+) = FF.FORMULA_ID ");
         sb.append("       AND TP.PARAM_CODE(+) = 'FL-POINT-C' ");
         sb.append("       and a.f_product = t.f_product ");
-        sb.append("       and t.f_data_code = 'COSTCL' and t.f_text_code IN ('COSTCL03','COSTCL07') ");
+        sb.append("       and t.f_data_code = 'COSTCL' and t.f_text_code IN ('COSTCL03', 'COSTCL04', 'COSTCL07') ");
+        sb.append("UNION ");
+        sb.append("SELECT DISTINCT ");
+        sb.append("       a.f_product, ");
+        sb.append("       NVL (FSI.GET_CLASS_XREF@TOFM (FF.CLASS), FF.CLASS) AS formula_class, ");
+        sb.append("       NVL (CF_FLASH_POINT, ROUND ( (TP.PVALUE * 1.8) + 32, 0)) AS FLASHF, ");
+        sb.append("       NVL (ROUND ( (5 / 9) * (CF_FLASH_POINT - 32), 0), TP.PVALUE) AS FLASHC, ");
+        sb.append("       ff.formula_id, ff.formula_code, ff.version, SUBSTR(ff.formula_code, INSTR(ff.formula_code, '.', -1, 1)+1, 3) as extension, ");
+        sb.append("       NVL (FSI.GET_SET_CODE_XREF@tofm(ff.group_code), 'USA') as setcode, ");
+        sb.append("       NVL (FSI.GET_BUS_GRP_XREF@tofm(ff.GROUP_CODE), fi.GROUP_CODE) as busgroup ");
+        sb.append("  FROM vca_rollup_items i, ");
+        sb.append("       t_product_alias_names an, ");
+        sb.append("       t_prod_comp a, ");
+        sb.append("       t_prod_text t, ");
+        sb.append("       FSITEM@TOFM fi, ");
+        sb.append("       FSFORMULA@TOFM ff, ");
+        sb.append("       FSFORMULATECHPARAM@TOFM TP ");
+        sb.append(" WHERE     i.rollup_item = an.f_alias ");
+        sb.append("       AND a.f_product = fi.item_code(+)   ");
+        sb.append("       AND fi.formula_id = ff.formula_id(+) ");
+        sb.append("       AND NVL (ff.status_ind, 0) <> 999 ");
+        sb.append("       AND TP.FORMULA_ID(+) = FF.FORMULA_ID ");
+        sb.append("       AND TP.PARAM_CODE(+) = 'FL-POINT-C' ");
+        sb.append("       AND a.f_component_id = an.f_product ");
+        sb.append("       AND a.f_product = t.f_product ");
+        sb.append("       and t.f_data_code = 'COSTCL' and t.f_text_code IN ('COSTCL03', 'COSTCL04', 'COSTCL07')  ");
+        sb.append("       AND i.rollup_id = ");
+        sb.append(rollupId);
+        sb.append(" UNION ");
+        sb.append("SELECT DISTINCT a.f_product,  ");
+        sb.append("       NVL (FSI.GET_CLASS_XREF@TOFM (FF.CLASS), FF.CLASS) AS formula_class, ");
+        sb.append("       NVL (CF_FLASH_POINT, ROUND ( (TP.PVALUE * 1.8) + 32, 0)) AS FLASHF, ");
+        sb.append("       NVL (ROUND ( (5 / 9) * (CF_FLASH_POINT - 32), 0), TP.PVALUE) AS FLASHC, ");
+        sb.append("       ff.formula_id, ff.formula_code, ff.version, SUBSTR(ff.formula_code, INSTR(ff.formula_code, '.', -1, 1)+1, 3) as extension, ");
+        sb.append("       NVL (FSI.GET_SET_CODE_XREF@tofm(ff.group_code), 'USA') as setcode, ");
+        sb.append("       NVL (FSI.GET_BUS_GRP_XREF@tofm(ff.GROUP_CODE), fi.GROUP_CODE) as busgroup ");
+        sb.append("  FROM (SELECT DISTINCT a.f_product ");
+        sb.append("          FROM vca_rollup_items i, ");
+        sb.append("               t_prod_comp a, ");
+        sb.append("               t_product_alias_names an, ");
+        sb.append("               t_prod_text t  ");
+        sb.append("         WHERE     a.f_component_id = an.f_product  ");
+        sb.append("               AND i.rollup_item = an.f_alias ");
+        sb.append("               and a.f_product = t.f_product ");
+        sb.append("               and t.f_data_code = 'COSTCL' and t.f_text_code IN ('COSTCL05','COSTCL08') ");
+        sb.append("               AND i.rollup_id = ");
+        sb.append(rollupId);
+        sb.append(") r, ");
+        sb.append("       t_prod_comp a, ");
+        sb.append("       t_prod_text t, ");
+        sb.append("       FSITEM@TOFM fi, ");
+        sb.append("       FSFORMULA@TOFM ff,  ");
+        sb.append("       FSFORMULATECHPARAM@TOFM TP ");
+        sb.append(" WHERE     a.f_component_id = r.f_product ");
+        sb.append("       AND a.f_product = fi.item_code(+) ");
+        sb.append("       AND fi.formula_id = ff.formula_id(+) ");
+        sb.append("       and nvl(ff.status_ind,0) <> 999 ");
+        sb.append("       AND TP.FORMULA_ID(+) = FF.FORMULA_ID ");
+        sb.append("       AND TP.PARAM_CODE(+) = 'FL-POINT-C' ");
+        sb.append("       and a.f_product = t.f_product ");
+        sb.append("       and t.f_data_code = 'COSTCL' and t.f_text_code IN ('COSTCL03', 'COSTCL04', 'COSTCL07') ");
       }
       else
       {
@@ -780,7 +840,7 @@ public class RollupInterface extends BaseInterface
         {
           priority = new Long("9");
         }
-        processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupComponent1"), status, priority, jobId, component, "0"));
+        processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupComponent1"), status, priority, jobId, component, "0", null));
       }
       status = new Long("5");
 
@@ -793,7 +853,7 @@ public class RollupInterface extends BaseInterface
         {
           priority = new Long("9");
         }
-        processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupRM1"), status, priority, jobId, product, "0"));
+        processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupRM1"), status, priority, jobId, product, "0", null));
       }
 
       status = new Long("5");
@@ -806,7 +866,7 @@ public class RollupInterface extends BaseInterface
         {
           priority = new Long("9");
         }
-        processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupResin1"), status, priority, jobId, product, "0"));
+        processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupResin1"), status, priority, jobId, product, "0", null));
       }
 
       for (ProductBean pBean: rollupBean.getRollupList())
@@ -823,6 +883,18 @@ public class RollupInterface extends BaseInterface
         }
       }
      // processCostCL01Products(rollupBean, jobId);
+     if (rollupBean.isProductImport())
+     {
+     //   addToProductImportQueue(rollupBean, processBeanList);
+       addFGToOptivaQueueBatch(rollupBean);
+     }
+     else
+     {
+       for (ProductBean productBean: rollupBean.getIntFgRepackList())
+       {
+         processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupFG1"), status, new Long("9"), jobId, productBean.getFProduct(), "0", null));
+       }
+     }     
       for (String product: rollupBean.getRmBoIpList())
       {
         addToPublishingQueue(product, processBeanList, jobId, rollupBean.getRollupId(), false);
@@ -831,9 +903,12 @@ public class RollupInterface extends BaseInterface
       {
         addToPublishingQueue(product, processBeanList, jobId, rollupBean.getRollupId(), false);
       }
-      for (ProductBean productBean: rollupBean.getIntFgRepackList())
+      if (!rollupBean.isProductImport())
       {
-        addToPublishingQueue(productBean.getFProduct(), processBeanList, jobId, rollupBean.getRollupId(), false);
+        for (ProductBean productBean: rollupBean.getIntFgRepackList())
+        {
+          addToPublishingQueue(productBean.getFProduct(), processBeanList, jobId, rollupBean.getRollupId(), false);
+        }
       }
 
       for (ProductBean pBean: rollupBean.getRollupList())
@@ -843,18 +918,6 @@ public class RollupInterface extends BaseInterface
           addToPublishingQueue(alias, processBeanList, jobId, rollupBean.getRollupId(), true);
         }
       }
-      if (rollupBean.isProductImport())
-      {
-        addToProductImportQueue(rollupBean, processBeanList);
-      }
-      else
-      {
-        for (ProductBean productBean: rollupBean.getIntFgRepackList())
-        {
-          processBeanList.add(ETLUtility.createIprocessBean(rollupBean.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "RollupFG1"), status, new Long("9"), jobId, productBean.getFProduct(), "0"));
-        }
-      }
-
       ETLUtility.submitIprocessJDBC(getWercsConn(), processBeanList);
     }
     catch (Exception e)
@@ -905,7 +968,7 @@ public class RollupInterface extends BaseInterface
             pBean.setDataCodes(WercsUtility.getProductImportDataAttributes(pBean));
             if (!pBean.getDataCodes().isEmpty())
             {
-              IprocessBean iProcessBean = ETLUtility.createIprocessBean(rb.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "Product Import"), new Long("5"), new Long(priority.toString()), ETLUtility.getNextJobId(getWercsConn()), pBean.getFProduct(), rb.getProductImportDelay());
+              IprocessBean iProcessBean = ETLUtility.createIprocessBean(rb.getRollupId(), ETLUtility.getProcessGroupId(getWercsConn(), "Product Import"), new Long("5"), new Long(priority.toString()), ETLUtility.getNextJobId(getWercsConn()), pBean.getFProduct(), rb.getProductImportDelay(), null);
               iProcessBean.setIProducts(ETLUtility.populateIproductBean(pBean, iProcessBean.getJobId(), rb.getRollupId()));
               iProcessBean.setIFormulations(ETLUtility.populateIformulationBeans(getWercsConn(), pBean, iProcessBean.getJobId(), rb.getRollupId()));
               iProcessBean.setIAttributes(ETLUtility.populateIattributeBeans(pBean, iProcessBean.getJobId(), rb.getRollupId(), true));
@@ -1084,6 +1147,151 @@ public class RollupInterface extends BaseInterface
       ETLUtility.submitIprocessJDBC(getWercsConn(), processBeanList);
     }
   }
+  
+  public void addFGToOptivaQueueBatch(RollupBean rb)
+  {
+    BigDecimal priority = rb.getLowestLevel().add(new BigDecimal("3"));
+    OracleConnection cb = (OracleConnection) ConnectionAccessBean.getConnection(DataSource.FORMULATION);
+    PreparedStatement updateCstmt = null;
+    PreparedStatement cstmt = null;
+
+    StringBuilder updateSb = new StringBuilder();
+    updateSb.append("UPDATE vca_optiva_to_wercs_6x SET status = 5 ");
+    updateSb.append("WHERE formula_code = ? ");
+    updateSb.append("AND version <> ? ");
+    updateSb.append("AND status = 0");
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("INSERT INTO VCA_OPTIVA_TO_WERCS_6X ");
+    sb.append("   SELECT VCA_OPTIVA_TO_WERCS_SEQ_6X.NEXTVAL, ");
+    sb.append("          ?, ?, ?, ?, 2, ?, '0', ");
+    sb.append("          NULL, NULL, NULL, ");
+    sb.append("          ? + SYSDATE, ");
+    sb.append("          'ROLLUP', ");
+    sb.append("          ? + SYSDATE, ");
+    sb.append("          'ROLLUP', ");
+    sb.append("          ?, ?, ?, ?, ?, ?, ");
+    sb.append("          'ROLLUP', ");
+    sb.append(CommonUtility.toVarchar(rb.getRollupId()));
+    sb.append("    , '1' ");   
+    sb.append("     FROM DUAL ");
+
+    try
+    {
+      updateCstmt = cb.prepareStatement(updateSb.toString());
+      cstmt = cb.prepareStatement(sb.toString());
+      for(ProductBean productBean: rb.getIntFgRepackList() )
+      {
+        try
+        {
+          if (productBean.isIntermediate())
+          {
+            priority = rb.getLowestLevel().subtract(productBean.getLevel()).add(new BigDecimal("3"));
+          }
+          setupOtoWCallableStatement(cb, productBean.getFProduct(), priority, rb.getProductImportDelay(), cstmt, updateCstmt);
+        }
+        catch (Exception e)
+        {
+          log4jLogger.error("Finished Good: " + productBean.getFProduct(), e);
+        }
+      }
+      updateCstmt.executeBatch();
+      cstmt.executeBatch();
+    }
+    catch (Exception e)
+    {
+      log4jLogger.error("Could not add to OptivaToWercs queue for Rollup: " + rb.getRollupId(), e);
+    }
+    finally
+    {
+      JDBCUtil.close(updateCstmt);
+      JDBCUtil.close(cstmt);
+      JDBCUtil.close(cb);
+    }
+  }
+  
+  public void setupOtoWCallableStatement(OracleConnection cb,String itemCode, BigDecimal priority, String otwDelay, PreparedStatement cstmt, PreparedStatement updateCstmt)
+  {
+    OraclePreparedStatement pst = null;
+    ResultSet rs = null;
+    try
+    {
+      StringBuilder sb = new StringBuilder();
+      sb.append("SELECT FORMULA_CODE, ");
+      sb.append("       VERSION, ");
+      sb.append("       I.FORMULA_ID, ");
+      sb.append("       I.ITEM_CODE, ");
+      sb.append("       F.DESCRIPTION, ");
+      sb.append("       NVL(FSI.GET_CLASS_XREF(F.CLASS),F.CLASS) AS CLASS, ");
+      sb.append("       nvl(FSI.GET_BUS_GRP_XREF(F.GROUP_CODE), F.GROUP_CODE)  ");
+      sb.append("          GROUP_CODE, ");
+      sb.append("          nvl(FSI.GET_SET_CODE_XREF(F.group_code), 'USA') as SET_CODE, ");
+      sb.append("       NVL(CF_FLASH_POINT,ROUND((TP2.PVALUE*1.8)+32,0)) as FLASHF, ");
+      sb.append("       NVL(ROUND((5/9)*(CF_FLASH_POINT-32),0),TP2.PVALUE) as FLASHC ");
+      sb.append("  FROM FSFORMULA F, FSITEM I, FSFORMULATECHPARAM TP, FSFORMULATECHPARAM TP2 ");
+      sb.append(" WHERE     I.FORMULA_ID = F.FORMULA_ID ");
+      sb.append("       AND F.ITEM_CODE = I.ITEM_CODE ");
+      sb.append("       AND TP.FORMULA_ID(+) = F.FORMULA_ID ");
+      sb.append("       AND TP.PARAM_CODE(+) = 'DEACTIVE' ");
+      sb.append("       AND NVL (TP.PVALUE, 0) = 0 ");
+      sb.append("       AND F.CLASS NOT IN ('G2', 'J1', 'J2', 'R', 'WF', 'OC', 'OL','J') ");
+      sb.append("       AND TP2.FORMULA_ID(+) = F.FORMULA_ID ");
+      sb.append("       AND TP2.PARAM_CODE(+) = 'FL-POINT-C' ");
+      sb.append("       AND I.ITEM_CODE = ");
+      sb.append(CommonUtility.toVarchar(itemCode));
+
+      pst = (OraclePreparedStatement) cb.prepareStatement(sb.toString());
+      rs = pst.executeQuery();
+
+      if (rs.next())
+      {
+        if (StringUtils.isEmpty(rs.getString("FLASHF")) || StringUtils.isEmpty(rs.getString("FLASHC")))
+        {
+          log4jLogger.error("No Flashf or Flashc, Product will not be added to OptivaToWercs queue: " + itemCode);
+        }
+        else
+        {
+          if ("OF".equals(rs.getString(6)))
+          {
+            priority = priority.add(new BigDecimal("1"));
+          }
+
+          updateCstmt.setString(1, rs.getString("FORMULA_CODE"));
+          updateCstmt.setString(2, rs.getString("VERSION"));
+          updateCstmt.addBatch();
+
+          cstmt.setString(1, rs.getString("FORMULA_CODE"));
+          cstmt.setString(2, rs.getString("VERSION"));
+          cstmt.setString(3, rs.getString("FORMULA_ID"));
+          cstmt.setString(4, rs.getString("ITEM_CODE"));
+          cstmt.setBigDecimal(5, priority);
+          cstmt.setString(6, otwDelay);
+          cstmt.setString(7, otwDelay);
+          cstmt.setString(8, rs.getString("DESCRIPTION"));
+          cstmt.setString(9, rs.getString("CLASS"));
+          cstmt.setString(10, rs.getString("GROUP_CODE"));
+          cstmt.setString(11, rs.getString("FLASHF"));
+          cstmt.setString(12, rs.getString("FLASHC"));
+          cstmt.setString(13, rs.getString("SET_CODE"));
+          cstmt.addBatch();
+          log4jLogger.info("Product will be added to OptivaToWercs queue: " + itemCode);
+        }
+      }
+      else
+      {
+        log4jLogger.error("Product will not be added to OptivaToWercs queue: " + itemCode);
+      }
+    }
+    catch (Exception e)
+    {
+      log4jLogger.error(e);
+    }
+    finally
+    {
+      JDBCUtil.close(pst, rs);
+    }
+  }
+
 
   public void setWercsConn(OracleConnection wercsConn)
   {

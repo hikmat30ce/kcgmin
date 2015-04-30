@@ -1,15 +1,5 @@
 package com.valspar.interfaces.financials.glstat.beans;
 
-/**
- * 
- * 
- * This class is a managed beans.
- * 
- * 
- * Hello this is our new ABCDEFProject
- * Added Sentence2345
- * 
- */
 public class GLStatBean
 {
   private String setOfBooksID;

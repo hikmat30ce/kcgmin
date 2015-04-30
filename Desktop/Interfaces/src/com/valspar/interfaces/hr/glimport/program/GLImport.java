@@ -32,12 +32,19 @@ public class GLImport extends BaseInterface
       log4jLogger.info("GLImport.startWatchingDirectory() started...");
       File[] files = new File(PropertiesServlet.getProperty("workday.glinputdirectory")).listFiles();
 
-      for (File file: files)
+      if (files != null && files.length == 1)
       {
-        if (file.isFile())
+        this.setDeleteLogFile(true);
+      }
+      else
+      {
+        for (File file: files)
         {
-          log4jLogger.info("Calling processGL for " + file.getCanonicalPath());
-          processGL(file);
+          if (file.isFile())
+          {
+            log4jLogger.info("Calling processGL for " + file.getCanonicalPath());
+            processGL(file);
+          }
         }
       }
     }

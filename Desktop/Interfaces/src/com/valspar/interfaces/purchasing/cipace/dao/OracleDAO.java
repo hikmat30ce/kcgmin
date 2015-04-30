@@ -455,8 +455,14 @@ public final class OracleDAO
     }
   }
 
-  private static String lookupGlAccountId(OracleConnection conn, PoHeadersInterfaceBean poBean)
+  private static String lookupGlAccountId(OracleConnection conn, PoHeadersInterfaceBean poBean, PoLinesInterfaceBean line)
   {
+    String glLocal = poBean.getGlLocal();
+    StringBuilder sb1 = new StringBuilder();
+    sb1.append("select keyfield4 from valspar.vca_lookups ");
+    sb1.append("where keyfield1 = 'CIPAce' and keyfield2 = ?  and keyfield3 = ? ");
+    glLocal = ValsparLookUps.queryForSingleValueLeaveConnectionOpen(conn, sb1.toString(), poBean.getGlCompanyCode(), line.getItemCategory());
+    
     StringBuilder sb = new StringBuilder();
     sb.append("SELECT code_combination_id ");
     sb.append("FROM gl_code_combinations ");
@@ -468,8 +474,10 @@ public final class OracleDAO
     sb.append("  AND segment6 = ? ");
     sb.append("  AND segment7 = ? ");
     sb.append("  AND nvl(segment8, ' ') = nvl(?, ' ') ");
+    
+    
 
-    return ValsparLookUps.queryForSingleValueLeaveConnectionOpen(conn, sb.toString(), poBean.getGlCompanyCode(), poBean.getGlProfitCenterCode(), poBean.getGlLocationCode(), poBean.getGlCostCenterCode(), poBean.getGlAccountNumber(), poBean.getGlCategoryCode(), poBean.getGlDepartmentCode(), poBean.getGlLocal());
+    return ValsparLookUps.queryForSingleValueLeaveConnectionOpen(conn, sb.toString(), poBean.getGlCompanyCode(), poBean.getGlProfitCenterCode(), poBean.getGlLocationCode(), poBean.getGlCostCenterCode(), poBean.getGlAccountNumber(), poBean.getGlCategoryCode(), poBean.getGlDepartmentCode(), glLocal);
   }
 
   private static boolean insertPurchaseOrderInterfaceDistributions(OracleConnection conn, PoHeadersInterfaceBean poBean)
@@ -515,7 +523,8 @@ public final class OracleDAO
                                                 x_cc_id => v_charge_account_id,
                                                 x_ac_id => v_accrual_account_id);
          */
-        String chargeAccountId = lookupGlAccountId(conn, poBean);
+        
+        String chargeAccountId = lookupGlAccountId(conn, poBean,  line);
 
         if (StringUtils.isEmpty(chargeAccountId))
         {

@@ -1,30 +1,20 @@
 package com.valspar.interfaces.clx.common.beans;
 
-import com.valspar.interfaces.common.servlets.PropertiesServlet;
 import java.util.*;
-import org.apache.commons.lang3.StringUtils;
 
-public class OrderStagingBean
+public class OrderStagingBean extends StagingBean
 {
   private String orderNumber;
   private String deliveryNumber;
   private String transferBatch;
-  private String transferNumber;
   private String orgnCode;
-  private String actionCode;
-  private String eventType;
-  private Date creationDate;
-  private Date lastUpdateDate;
-  private String transId;
-  private String status;
-  private String lastUpdatedBy;
+  private String transferNumber;
+  private String carrierSCAC;
   private Date bolPrintDate;
-  private String returnMessage;
-  private String returnCode;
   private List<OrderLineBean> orderLineBeanList = new ArrayList<OrderLineBean>();
-  private String generatedXmlMessage;
-  private String senderId;
-  private String senderIdKey;
+  private boolean tempControlled;
+  private boolean hazmat;
+  private boolean expedited;
   
   public OrderStagingBean()
   {
@@ -48,88 +38,6 @@ public class OrderStagingBean
   public String getDeliveryNumber()
   {
     return deliveryNumber;
-  }
-
-  public void setActionCode(String actionCode)
-  {
-    this.actionCode = actionCode;
-  }
-
-  public String getActionCode()
-  {
-    return actionCode;
-  }
-
-  public void setEventType(String eventType)
-  {
-    this.eventType = eventType;
-  }
-
-  public String getEventType()
-  {
-    return eventType;
-  }
-
-  public void setTransId(String transId)
-  {
-    this.transId = transId;
-  }
-
-  public String getTransId()
-  {
-    return transId;
-  }
-
-  public void setStatus(String status)
-  {
-    this.status = status;
-  }
-
-  public String getStatus()
-  {
-    return status;
-  }
-
-  public void setLastUpdatedBy(String lastUpdatedBy)
-  {
-    this.lastUpdatedBy = lastUpdatedBy;
-  }
-
-  public String getLastUpdatedBy()
-  {
-    return lastUpdatedBy;
-  }
-
-  public void setCreationDate(Date creationDate)
-  {
-    this.creationDate = creationDate;
-  }
-
-  public Date getCreationDate()
-  {
-    return creationDate;
-  }
-
-  public void setLastUpdateDate(Date lastUpdateDate)
-  {
-    this.lastUpdateDate = lastUpdateDate;
-  }
-
-  public Date getLastUpdateDate()
-  {
-    return lastUpdateDate;
-  }
-  
-  public boolean isDeleteAction()
-  {
-    if (StringUtils.equalsIgnoreCase(this.getActionCode(), "DELETE"))
-    {
-      return true;
-    }
-    else 
-    {
-      return false;
-    }
   }
 
   public void setBolPrintDate(Date bolPrintDate)
@@ -160,62 +68,6 @@ public class OrderStagingBean
   public String getOrgnCode()
   {
     return orgnCode;
-  }
-
-  public void setReturnMessage(String returnMessage)
-  {
-    this.returnMessage = returnMessage;
-  }
-
-  public String getReturnMessage()
-  {
-    return returnMessage;
-  }
-
-  public void setReturnCode(String returnCode)
-  {
-    this.returnCode = returnCode;
-  }
-
-  public String getReturnCode()
-  {
-    return returnCode;
-  }
-  
-  public String getInterfaceStatusCode()
-  {
-    if (this.getReturnCode() != null && StringUtils.equalsIgnoreCase(this.getReturnCode(), "0"))
-    {
-      return "S";
-    }
-    else
-    {
-      return "E";
-    }
-  }
-  
-  public boolean isErrorStatus()
-  {
-    if (StringUtils.equalsIgnoreCase(this.getInterfaceStatusCode(), "E"))
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  public boolean isDelete()
-  {
-    if (StringUtils.equalsIgnoreCase(this.getActionCode(), "DELETE"))
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
   }
 
   public boolean isInventoryTransfer()
@@ -250,33 +102,58 @@ public class OrderStagingBean
     return orderLineBeanList;
   }
 
-  public void setGeneratedXmlMessage(String generatedXmlMessage)
+  public String getStagingTableName()
   {
-    this.generatedXmlMessage = generatedXmlMessage;
+    return "VALSPAR.VCA_CLX_ORDER_STAGE";
+  }
+  
+  public List<String> getProductIdList()
+  {
+    List<String> productList = new ArrayList<String>();
+    for (OrderLineBean orderLineBean: this.getOrderLineBeanList())
+    {
+      productList.add(orderLineBean.getProductId());
+    }
+    return productList;
   }
 
-  public String getGeneratedXmlMessage()
+  public void setTempControlled(boolean tempControlled)
   {
-    return generatedXmlMessage;
+    this.tempControlled = tempControlled;
   }
 
-  public String getSenderId()
+  public boolean isTempControlled()
   {
-    return senderId;
+    return tempControlled;
   }
 
-  public void setSenderId(String senderId)
+  public void setExpedited(boolean expedited)
   {
-    this.senderId = senderId;
+    this.expedited = expedited;
   }
 
-  public void setSenderIdKey(String senderIdKey)
+  public boolean isExpedited()
   {
-    this.senderIdKey = senderIdKey;
+    return expedited;
   }
 
-  public String getSenderIdKey()
+  public void setHazmat(boolean hazmat)
   {
-    return senderIdKey;
+    this.hazmat = hazmat;
+  }
+
+  public boolean isHazmat()
+  {
+    return hazmat;
+  }
+
+  public void setCarrierSCAC(String carrierSCAC)
+  {
+    this.carrierSCAC = carrierSCAC;
+  }
+
+  public String getCarrierSCAC()
+  {
+    return carrierSCAC;
   }
 }

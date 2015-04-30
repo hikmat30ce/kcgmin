@@ -363,7 +363,8 @@ public class WercsToOptivaInterface extends BaseInterface
     try
     {
       StringBuilder fileName = new StringBuilder();
-      fileName.append(PropertiesServlet.getProperty("wercstoptiva.directory"));
+   //   fileName.append(PropertiesServlet.getProperty("wercstoptiva.directory"));  /TODO
+      fileName.append(PropertiesServlet.getProperty("wercstoptiva.directory") + "6x/");
       fileName.append("OptivaFormulas");
       fileName.append(CommonUtility.getFormattedDate("MMdyyyyhhmm"));
       fileName.append("_");
@@ -490,7 +491,14 @@ public class WercsToOptivaInterface extends BaseInterface
         }
         else
         {
-          value.setText(db.getDefaultValue());
+          if(StringUtils.equalsIgnoreCase(db.getTable(), "t_prod_text") && isUsingDefaultPositiveValue(db))
+          {
+            value.setText(db.getDefaultPositiveValue());           
+          }
+          else
+          {
+            value.setText(db.getDefaultValue());
+          }
         }
         tp0row.addContent(lineId);
         tp0row.addContent(keyCode2);
@@ -569,6 +577,15 @@ public class WercsToOptivaInterface extends BaseInterface
           strow3.addContent(sClass3);
           item.addContent(strow3);
         }
+        else
+        {
+          if(StringUtils.equalsIgnoreCase(db.getTable(), "t_comp_text") && this.isUsingDefaultPositiveValue(db))
+          {
+            sClass3.setText(db.getDefaultPositiveValue());
+            strow3.addContent(sClass3);
+            item.addContent(strow3);            
+          }
+        }
       }
 
       Element perrow = new Element(Constants.PERROW);
@@ -625,7 +642,8 @@ public class WercsToOptivaInterface extends BaseInterface
     try
     {
       StringBuilder fileName = new StringBuilder();
-      fileName.append(PropertiesServlet.getProperty("wercstoptiva.directory"));
+     // fileName.append(PropertiesServlet.getProperty("wercstoptiva.directory"));  //TODO
+      fileName.append(PropertiesServlet.getProperty("wercstoptiva.directory") + "6x/");
       fileName.append("OptivaItems");
       fileName.append(CommonUtility.getFormattedDate("MMdyyyyhhmm"));
       fileName.append("_");
@@ -669,47 +687,39 @@ public class WercsToOptivaInterface extends BaseInterface
         {
           sql.append("select f_data_code,f_data ");
           sql.append("from t_prod_data ");
-          sql.append("where f_data_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_product = '");
-          sql.append(db.getProduct());
-          sql.append("' ");
+          sql.append("where f_data_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_product = ");
+          sql.append(CommonUtility.toVarchar(db.getProduct()));
         }
         if (db.getTable().equalsIgnoreCase("t_prod_text"))
         {
           sql.append("select a.f_text_code, b.f_text_line ");
           sql.append("from t_prod_text a, t_text_details b ");
           sql.append("where a.f_text_code = b.f_text_code ");
-          sql.append("and   a.f_text_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_product = '");
-          sql.append(db.getProduct());
-          sql.append("' ");
+          sql.append("and   a.f_text_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_product = ");
+          sql.append(CommonUtility.toVarchar(db.getProduct()));
         }
         if (db.getTable().equalsIgnoreCase("t_comp_data"))
         {
           sql.append("select f_data_code,f_data ");
           sql.append("from t_comp_data ");
-          sql.append("where f_data_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_component_id = '");
-          sql.append(db.getProduct());
-          sql.append("'");
+          sql.append("where f_data_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_component_id = ");
+          sql.append(CommonUtility.toVarchar(db.getProduct()));
         }
         if (db.getTable().equalsIgnoreCase("t_comp_text"))
         {
           sql.append("select a.f_text_code, b.f_text_line ");
           sql.append("from t_comp_text a, t_text_details b ");
           sql.append("where a.f_text_code = b.f_text_code ");
-          sql.append("and   a.f_text_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_component_id = '");
-          sql.append(db.getProduct());
-          sql.append("' ");
+          sql.append("and   a.f_text_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_component_id = ");
+          sql.append(CommonUtility.toVarchar(db.getProduct()));
         }
 
         hm.put(db.getWercsDataCode(), (DataCodeBean) db.clone());
@@ -764,47 +774,39 @@ public class WercsToOptivaInterface extends BaseInterface
         {
           sql.append("select f_data_code,f_data ");
           sql.append("from t_prod_data ");
-          sql.append("where f_data_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_product = '");
-          sql.append(product);
-          sql.append("' ");
+          sql.append("where f_data_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_product = ");
+          sql.append(CommonUtility.toVarchar(product));
         }
         if (db.getTable().equalsIgnoreCase("t_prod_text"))
         {
           sql.append("select a.f_text_code, b.f_text_line ");
           sql.append("from t_prod_text a, t_text_details b ");
           sql.append("where a.f_text_code = b.f_text_code ");
-          sql.append("and   a.f_text_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_product = '");
-          sql.append(product);
-          sql.append("' ");
+          sql.append("and   a.f_text_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_product = ");
+          sql.append(CommonUtility.toVarchar(product));
         }
         if (db.getTable().equalsIgnoreCase("t_comp_data"))
         {
           sql.append("select f_data_code,f_data ");
           sql.append("from t_comp_data ");
-          sql.append("where f_data_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_component_id = '");
-          sql.append(product);
-          sql.append("'");
+          sql.append("where f_data_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_component_id = ");
+          sql.append(CommonUtility.toVarchar(product));
         }
         if (db.getTable().equalsIgnoreCase("t_comp_text"))
         {
           sql.append("select a.f_text_code, b.f_text_line ");
           sql.append("from t_comp_text a, t_text_details b ");
           sql.append("where a.f_text_code = b.f_text_code ");
-          sql.append("and   a.f_text_code = '");
-          sql.append(db.getWercsDataCode());
-          sql.append("' ");
-          sql.append("and f_component_id = '");
-          sql.append(product);
-          sql.append("' ");
+          sql.append("and   a.f_text_code = ");
+          sql.append(CommonUtility.toVarchar(db.getWercsDataCode()));
+          sql.append(" and f_component_id = ");
+          sql.append(CommonUtility.toVarchar(product));
         }
 
         hm.put(db.getWercsDataCode(), (DataCodeBean) db.clone());
@@ -931,19 +933,19 @@ public class WercsToOptivaInterface extends BaseInterface
         String product = (String) it.next();
 
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT A.F_ALIAS_NAME, B.F_CAS_NUMBER, GET_WERCS_TEXT_CODE('");
-        sql.append(product);
-        sql.append("','BUSGP'), B.F_CHEM_NAME, C.F_DATA_CODE, GET_WERCS_DATA('");
-        sql.append(product);
-        sql.append("','RMGDESC')");
+        sql.append("SELECT A.F_ALIAS_NAME, B.F_CAS_NUMBER, ");
+        sql.append("upper(vca_wercs_common_pkg.get_default_phrase(GET_WERCS_TEXT_CODE(");
+        sql.append(CommonUtility.toVarchar(product));
+        sql.append(", 'BUSGP') , 'EN')), B.F_CHEM_NAME, C.F_DATA_CODE, GET_WERCS_DATA(");
+        sql.append(CommonUtility.toVarchar(product));
+        sql.append(",'RMGDESC')");
         sql.append("FROM T_PRODUCT_ALIAS_NAMES A , T_COMPONENTS B, T_COMP_TEXT C ");
         sql.append("WHERE A.F_ALIAS = A.F_PRODUCT ");
         sql.append("AND   A.F_PRODUCT = B.F_COMPONENT_ID(+) ");
         sql.append("AND   A.F_PRODUCT = C.F_COMPONENT_ID(+) ");
         sql.append("AND C.F_TEXT_CODE(+) = 'CMPTYP07' ");
-        sql.append("AND A.F_PRODUCT = '");
-        sql.append(product);
-        sql.append("' ");
+        sql.append("AND A.F_PRODUCT = ");
+        sql.append(CommonUtility.toVarchar(product));
 
         stmt = getWercsConn().createStatement();
         rs = stmt.executeQuery(sql.toString());
@@ -1174,6 +1176,27 @@ public class WercsToOptivaInterface extends BaseInterface
     }
   }
 
+private boolean isUsingDefaultPositiveValue(DataCodeBean dataCodeBean)
+{
+  boolean existFlag = false;
+  StringBuilder sb = new StringBuilder();
+  sb.append("select 'X' from ");
+  sb.append(dataCodeBean.getTable());
+  if(StringUtils.equalsIgnoreCase(dataCodeBean.getTable(), "t_prod_text"))
+  {
+    sb.append(" where f_text_code = ? and f_product = ? and rownum = 1");
+  }
+  else
+  {
+    sb.append(" where f_text_code = ? and f_component_id = ? and rownum = 1");    
+  }
+  String existTextCode = ValsparLookUps.queryForSingleValue(DataSource.WERCS, sb.toString(), dataCodeBean.getWercsDataCode(), dataCodeBean.getProduct());
+  if(StringUtils.isNotEmpty(existTextCode))
+  {
+    existFlag = true;   
+  }
+  return existFlag;
+}
   public void setWercsConn(OracleConnection wercsConn)
   {
     this.wercsConn = wercsConn;

@@ -550,7 +550,7 @@ public class LockoutsInterface extends BaseInterface
     sb.append("select 'X' from t_usage_totals_comp ");
     if (StringUtils.equalsIgnoreCase(usageType, "DSL"))
     {
-      sb.append("where  f_cas_number = :CASNO' ");
+      sb.append("where  f_cas_number = :CASNO ");
       sb.append("and  f_comp_id = :COMPID ");
     }
     else
